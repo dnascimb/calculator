@@ -1,0 +1,89 @@
+<html>
+<head>
+<title>The Calculator</title>
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="calculator.js"></script>
+<script type="text/javascript">
+
+	function calculateAndDisplay() {
+		
+		var calc = new Calculator();
+		
+		// set values for core variables
+		calc.setOriginalPercentageSubA($.trim($("#suba_percentage").val()));
+		calc.setCuredMassSubA($.trim($("#cured_mass").val()));
+		calc.setMassResultSubB($.trim($("#butter_amount").val()));
+
+		// set calculated values to display on screen
+		$("#cured_suba_percentage").text(calc.getCuredSubAPercent() + "%");
+		$("#cured_thc_mass").text(calc.getCuredSubAMass() + " mg THC|CBD");
+		$("#thc_per_g_butter").text(calc.getSubAMassPerSubBMass() + " mgs THC|CBD /g butter");
+		$("#thc_per_stick_butter").text(calc.getSubAMassPerSpecificSubBMass(113) + " mg THC|CBD");
+		$("#thc_per_tsp_butter").text(calc.getSubAMassPerSpecificSubBMass(113) / 4 + " mg THC|CBD");
+	}
+
+	$(document).ready(function(){
+    	
+    	$("#cured_mass").blur(function(){
+        	calculateAndDisplay();
+    	});
+    	$("#suba_percentage").blur(function(){
+        	calculateAndDisplay();
+    	});
+    	$("#butter_amount").blur(function(){
+        	calculateAndDisplay();
+    	});
+
+    	//protect the fields from bad user entry
+    	// 48 = "0", 57 = "9", 127 = delete, 8 = backspace, 190 = ".", 9 = tab
+    	$('#cured_mass').keydown(function(event){
+    		var keycode = (event.keyCode ? event.keyCode : event.which);
+    		if((keycode < 48 || keycode > 57) && keycode != 127 && keycode != 8 && keycode != 190 && keycode != 9) {
+        		event.preventDefault();
+   				return false;
+   			}
+    	});
+    	$('#suba_percentage').keydown(function(event){
+    		var keycode = (event.keyCode ? event.keyCode : event.which);
+    		if((keycode < 48 || keycode > 57) && keycode != 127 && keycode != 8 && keycode != 190 && keycode != 9) {
+        		event.preventDefault();
+   				return false;
+   			}
+    	});
+    	$('#butter_amount').keydown(function(event){
+    		var keycode = (event.keyCode ? event.keyCode : event.which);
+    		if((keycode < 48 || keycode > 57) && keycode != 127 && keycode != 8 && keycode != 190 && keycode != 9) {
+        		event.preventDefault();
+   				return false;
+   			}
+    	});
+	});
+</script>
+</head>
+
+
+<body>
+	<form name="calcForm">
+	<!--   <label>uncured weight: </label> <input name="uncured_mass" id="uncured_mass" class="input"/> <label> grams </label>
+		<br> 
+	-->
+		<label>Substance "A" THC/CBD Percentage: </label> <input name="suba_percentage" id="suba_percentage" class="input"/> %
+		<br>
+		<label>Substance "A" Cured Mass: </label> <input name="cured_mass" id="cured_mass" class="input"/> <label> grams </label>
+		<br>
+		<label>Butter Amount: </label> <input name="butter_amount" id="butter_amount" class="input"/> <label> teaspoons </label>
+		<br>
+		<label>cured thc percentage: </label> <label id="cured_suba_percentage">0 %</label>
+		<br>
+		<label>cured thc weight: </label> <label id="cured_thc_mass">0 mg</label>
+		<br>
+		<label>thc per unit butter: </label> <label id="thc_per_g_butter">0 mgs THC/g butter</label>
+		<br>
+		<label>thc per stick butter: </label> <label id="thc_per_stick_butter">0 mg THC per 1 stick butter</label>
+		<br>
+		<label>one serving (1 tsp): </label> <label id="thc_per_tsp_butter">0 mg THC</label>
+	</form>
+</body>
+
+
+</head>
