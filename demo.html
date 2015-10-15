@@ -29,7 +29,6 @@
 	$(document).ready(function(){
     	
     	$("#cured_mass").blur(function(){
-    		console.log("hi");
         	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), $.trim($("#butter_amount").val()));
     	});
     	$("#suba_percentage").blur(function(){

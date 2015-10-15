@@ -83,7 +83,6 @@ Calculator.prototype.getSubAMassPerSingleSubBMassUnit = function() {
 Calculator.prototype.getSubAMassPerSpecificSubBMass = function(value) {
 	if(!value)
 		return 0;
-	console.log("value: " + value);
 	this.curedSubAMassPerCertainAmountofSubBMass = this.getSubAMassPerSingleSubBMassUnit() * value;
 	if(shouldRound)
 		return this.curedSubAMassPerCertainAmountofSubBMass.toFixed(2);
@@ -110,8 +109,6 @@ Calculator.prototype.getSubBMassAfterInfusion = function() {
 Calculator.prototype.getSubAMassPerNumberOfServings = function(subB_massInTablespoons, numberOfServings) {
 	if(!subB_massInTablespoons || !numberOfServings)
 		return 0;
-	console.log("subB_massInTablespoons: " + subB_massInTablespoons);
-	console.log("numberOfServings: " + numberOfServings);
 	this.subA_massPerServing = this.getSubAMassPerSpecificSubBMass(subB_massInTablespoons * 14.18) / numberOfServings;
 	if(shouldRound)
 		return this.subA_massPerServing.toFixed(2);
