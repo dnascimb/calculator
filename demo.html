@@ -7,47 +7,42 @@
 <script type="text/javascript" src="calculator.js"></script>
 <script type="text/javascript">
 
-	function calculateAndDisplay() {
+	function calculateAndDisplay(cannabis_starting_thc_percentage, cannabis_cured_mass, butter_amount) {
 		
 		var calc = new Calculator();
 		
 		// set values for core variables
-		calc.setOriginalPercentageSubA($.trim($("#suba_percentage").val()));
-		calc.setFinalSubAMass($.trim($("#cured_mass").val()));
-		calc.setMassResultSubB($.trim($("#butter_amount").val()));
+		calc.setOriginalPercentageSubA(cannabis_starting_thc_percentage);
+		calc.setFinalSubAMass(cannabis_cured_mass);
+		calc.setMassResultSubB(butter_amount);
 
 		// set calculated values to display on screen
 		$("#cured_suba_percentage").text(calc.getCuredSubAPercent() + "%");
-		$("#cured_thc_mass").text(calc.getCuredSubACalculatedMass() + "mg");
+		$("#cured_thc_mass_per_gram").text(calc.getCuredSubACalculatedMassPerGram() + "mg");
+		$("#cured_thc_mass").text(calc.getCuredSubACalculatedMassTotal() + "mg");
 		$("#butter_after_loss").text(calc.getSubBMassAfterInfusion() + "tbsp");
-		$("#thc_per_g_butter").text(calc.getSubAMassPerSubBMass() + "mg");
+		$("#thc_per_g_butter").text(calc.getSubAMassPerSingleSubBMassUnit() + "mg");
 		$("#suba_per_stick").text(calc.getSubAMassPerSpecificSubBMass(113) + "mg");
-		
-//		var butterInGrams = $.trim($("#cooking_butter_amount").val()) * 14.18;
-//		console.log(butterInGrams);
-//		var totalMGForGrams = calc.getSubAMassPerSpecificSubBMass(butterInGrams);
-//		var mgPerServing = totalMGForGrams / $.trim($("#recipe_servings").val());
-//		$("#thc_per_serving").text(mgPerServing + " mg");
-
-		$("#thc_per_serving").text(calc.getSubAMassPerNumberOfServings($.trim($("#cooking_butter_amount").val()), $.trim($("#recipe_servings").val())) + " mg");
+		$("#thc_per_serving").text(calc.getSubAMassPerNumberOfServings($.trim($("#cooking_butter_amount").val()), $.trim($("#recipe_servings").val())) + "mg");
 	}
 
 	$(document).ready(function(){
     	
-    	$("#cured_mass").change(function(){
-        	calculateAndDisplay();
+    	$("#cured_mass").blur(function(){
+    		console.log("hi");
+        	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), $.trim($("#butter_amount").val()));
     	});
-    	$("#suba_percentage").change(function(){
-        	calculateAndDisplay();
+    	$("#suba_percentage").blur(function(){
+        	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), $.trim($("#butter_amount").val()));
     	});
-    	$("#butter_amount").change(function(){
-        	calculateAndDisplay();
+    	$("#butter_amount").blur(function(){
+        	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), $.trim($("#butter_amount").val()));
     	});
-		$("#cooking_butter_amount").change(function(){
-        	calculateAndDisplay();
+		$("#cooking_butter_amount").blur(function(){
+        	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), $.trim($("#butter_amount").val()));
     	});
-    	$("#recipe_servings").change(function(){
-        	calculateAndDisplay();
+    	$("#recipe_servings").blur(function(){
+        	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), $.trim($("#butter_amount").val()));
     	});
     	
 
@@ -95,9 +90,9 @@
 		<div id="inputsection1" class="col-md-6">
 			<form name="calcForm1">
 				<label>Starting Cannabis THC|CBD Percentage: </label> 
-				<input name="suba_percentage" id="suba_percentage" class="input" placeholder="20.10"/> %
+				<input name="suba_percentage" id="suba_percentage" class="input" placeholder="20"/> %
 				<br><br><label>Final Cannabis Mass: </label>
-				<input name="cured_mass" id="cured_mass" class="input" placeholder="3.5"/> <label> grams </label>
+				<input name="cured_mass" id="cured_mass" class="input" placeholder="100"/> <label> grams </label>
 			</form>
 		</div>
 		<div id="results1" class="col-md-6">
@@ -106,15 +101,24 @@
               <h3 class="panel-title">THC|CBD %</h3>
             </div>
             <div class="panel-body">
-              <label id="cured_suba_percentage">0 %</label>
+              <label id="cured_suba_percentage">0%</label>
             </div>
           </div>
           <div class="panel panel-primary">
             <div class="panel-heading">
-              <h3 class="panel-title">THC|CBD Mass</h3>
+              <h3 class="panel-title">THC|CBD Mass Per Gram</h3>
             </div>
             <div class="panel-body">
-              <label id="cured_thc_mass">0 mg</label>
+              <label id="cured_thc_mass_per_gram">0mg</label>
+            </div>
+          </div>
+
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">THC|CBD Mass Total</h3>
+            </div>
+            <div class="panel-body">
+              <label id="cured_thc_mass">0mg</label>
             </div>
           </div>
         </div>
@@ -134,7 +138,7 @@
         <div id="inputsection2" class="col-md-6">
 			<form name="calcForm2">
 				<br><br><label>Starting Butter Amount: </label> 
-				<input name="butter_amount" id="butter_amount" class="input" placeholder="10.4"/> <label> tablespoons </label>
+				<input name="butter_amount" id="butter_amount" class="input" placeholder="10.64"/> <label> tablespoons </label>
 			</form>
 		</div>
 		<div id="results2" class="col-md-6">
@@ -143,7 +147,7 @@
               <h3 class="panel-title">Butter After Loss (-25%)</h3>
             </div>
             <div class="panel-body">
-              <label id="butter_after_loss">0 tbsp</label>
+              <label id="butter_after_loss">0tbsp</label>
             </div>
           </div>
           <div class="panel panel-primary">
@@ -151,7 +155,7 @@
               <h3 class="panel-title">THC|CBD per g Butter</h3>
             </div>
             <div class="panel-body">
-              <label id="thc_per_g_butter">0 mg</label>
+              <label id="thc_per_g_butter">0mg</label>
             </div>
           </div> 
           <div class="panel panel-primary">
@@ -159,7 +163,7 @@
               <h3 class="panel-title">THC|CBD in a Full Stick of Butter</h3>
             </div>
             <div class="panel-body">
-              <label id="suba_per_stick">0 mg</label>
+              <label id="suba_per_stick">0mg</label>
             </div>
           </div>         
 		</div>
@@ -190,7 +194,7 @@
               <h3 class="panel-title">THC|CBD per Serving</h3>
             </div>
             <div class="panel-body">
-              <label id="thc_per_serving">0 mg</label>
+              <label id="thc_per_serving">0mg</label>
             </div>
           </div>
 		</div>

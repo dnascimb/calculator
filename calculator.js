@@ -23,9 +23,9 @@ function Calculator() {
 //
 // Constructor
 //
-function Calculator(subA_startingPercentage, subA_startingMass, subB_startingMass) {
+function Calculator(subA_startingPercentage, subA_finalMass, subB_startingMass) {
 	this.opsa = subA_startingPercentage; //whole number
-	this.cmsa = subA_startingMass; //grams
+	this.cmsa = subA_finalMass; //grams
 	this.mrsc = subB_startingMass * 14.18; //entered in tablespoons and we convert to grams
 }
 
@@ -35,7 +35,6 @@ function Calculator(subA_startingPercentage, subA_startingMass, subB_startingMas
 Calculator.prototype.getCuredSubAPercent = function() {
 	if(!this.opsa)
 		return 0;
-
 	this.curedSubAPercent = this.opsa * .7;
 	if(shouldRound)
 		return this.curedSubAPercent.toFixed(2);
@@ -44,12 +43,21 @@ Calculator.prototype.getCuredSubAPercent = function() {
 };
 
 //
+// This function returns the cured mass amount of SubstanceA (mg) per of cannabis
+//
+Calculator.prototype.getCuredSubACalculatedMassPerGram = function() {
+	this.curedSubACalculatedMassPerGram = this.getCuredSubAPercent() * 10;
+	if(shouldRound)
+		return this.curedSubACalculatedMassPerGram.toFixed(2);
+	else
+		return this.curedSubACalculatedMassPerGram;
+};
+
+//
 // This function returns the cured mass amount of SubstanceA (mg)
 //
-Calculator.prototype.getCuredSubACalculatedMass = function() {
-	if(!this.cmsa || !this.curedSubAPercent)
-		return 0;
-	this.curedSubACalculatedMass = this.cmsa * this.curedSubAPercent * 10;
+Calculator.prototype.getCuredSubACalculatedMassTotal = function() {
+	this.curedSubACalculatedMass = this.getCuredSubACalculatedMassPerGram() * this.cmsa;
 	if(shouldRound)
 		return this.curedSubACalculatedMass.toFixed(2);
 	else
@@ -58,16 +66,14 @@ Calculator.prototype.getCuredSubACalculatedMass = function() {
 
 //
 // This function returns the SubstanceA (mg) mass amount per SubstanceB (g) mass amount
-
-// *********FIX TO FACTOR IN LOSS OF BUTTER
-Calculator.prototype.getSubAMassPerSubBMass = function() {
-	if(!this.curedSubACalculatedMass || !this.mrsc)
-		return 0;
-	this.curedSubAMassPerSubBMass = this.curedSubACalculatedMass / this.mrsc;
+Calculator.prototype.getSubAMassPerSingleSubBMassUnit = function() {
+	var a = this.getCuredSubACalculatedMassPerGram();
+	var b = this.getSubBMassAfterInfusion() * 14.18;
+	this.curedSubAMassPerSingleSubBMassUnit = a / b;
 	if(shouldRound)
-		return this.curedSubAMassPerSubBMass.toFixed(2);
+		return this.curedSubAMassPerSingleSubBMassUnit.toFixed(2);
 	else
-		return this.curedSubAMassPerSubBMass;
+		return this.curedSubAMassPerSingleSubBMassUnit;
 };
 
 
@@ -75,9 +81,10 @@ Calculator.prototype.getSubAMassPerSubBMass = function() {
 // This function returns the SubstanceA mass amount per the passed in SubstanceB mass amount 
 //
 Calculator.prototype.getSubAMassPerSpecificSubBMass = function(value) {
-	if(!this.curedSubAMassPerSubBMass || !value)
+	if(!value)
 		return 0;
-	this.curedSubAMassPerCertainAmountofSubBMass = this.curedSubAMassPerSubBMass * value;
+	console.log("value: " + value);
+	this.curedSubAMassPerCertainAmountofSubBMass = this.getSubAMassPerSingleSubBMassUnit() * value;
 	if(shouldRound)
 		return this.curedSubAMassPerCertainAmountofSubBMass.toFixed(2);
 	else
@@ -103,6 +110,8 @@ Calculator.prototype.getSubBMassAfterInfusion = function() {
 Calculator.prototype.getSubAMassPerNumberOfServings = function(subB_massInTablespoons, numberOfServings) {
 	if(!subB_massInTablespoons || !numberOfServings)
 		return 0;
+	console.log("subB_massInTablespoons: " + subB_massInTablespoons);
+	console.log("numberOfServings: " + numberOfServings);
 	this.subA_massPerServing = this.getSubAMassPerSpecificSubBMass(subB_massInTablespoons * 14.18) / numberOfServings;
 	if(shouldRound)
 		return this.subA_massPerServing.toFixed(2);
