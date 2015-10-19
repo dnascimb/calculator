@@ -17,12 +17,33 @@
 		calc.setMassResultSubB(butter_amount);
 
 		// set calculated values to display on screen
-		$("#cured_suba_percentage").text(calc.getCuredSubAPercent() + "%");
-		$("#cured_thc_mass_per_gram").text(calc.getCuredSubACalculatedMassPerGram() + "mg");
+		$("#cured_suba_percentage_calc").text(cannabis_starting_thc_percentage + " * "
+      + ".7 = ");
+    $("#cured_suba_percentage").text(calc.getCuredSubAPercent() + "%");
+    
+		$("#cured_thc_mass_per_gram_calc").text(cannabis_starting_thc_percentage + " * "
+      + ".10 = ");
+    $("#cured_thc_mass_per_gram").text(calc.getCuredSubACalculatedMassPerGram() + "mg");
+    
+    $("#cured_thc_mass_calc").text(calc.getCuredSubACalculatedMassPerGram() + " * "
+      + cannabis_cured_mass + " = ");
 		$("#cured_thc_mass").text(calc.getCuredSubACalculatedMassTotal() + "mg");
-		$("#butter_after_loss").text(calc.getSubBMassAfterInfusion() + "tbsp");
+    
+		$("#butter_after_loss_calc").text(butter_amount + " * "
+      + ".75 = ");
+    $("#butter_after_loss").text(calc.getSubBMassAfterInfusion() + "tbsp");
+
+    $("#thc_per_g_butter_calc").text(calc.getCuredSubACalculatedMassPerGram() + " / ("
+      + calc.getSubBMassAfterInfusion() + " * 14.18) = ");
 		$("#thc_per_g_butter").text(calc.getSubAMassPerSingleSubBMassUnit() + "mg");
-		$("#suba_per_stick").text(calc.getSubAMassPerSpecificSubBMass(113) + "mg");
+		
+    $("#suba_per_stick_calc").text(calc.getSubAMassPerSingleSubBMassUnit() + " * "
+      + "113 = ");
+    $("#suba_per_stick").text(calc.getSubAMassPerSpecificSubBMass(113) + "mg");
+
+    $("#thc_per_serving_calc").text(calc.getSubAMassPerSingleSubBMassUnit() + " * (" 
+      + $.trim($("#cooking_butter_amount").val()) + " * 14.18) / "
+      + $.trim($("#recipe_servings").val()) + " = ");
 		$("#thc_per_serving").text(calc.getSubAMassPerNumberOfServings($.trim($("#cooking_butter_amount").val()), $.trim($("#recipe_servings").val())) + "mg");
 	}
 
@@ -100,6 +121,7 @@
               <h3 class="panel-title">THC|CBD %</h3>
             </div>
             <div class="panel-body">
+              <label id="cured_suba_percentage_calc"></label><br>
               <label id="cured_suba_percentage">0%</label>
             </div>
           </div>
@@ -108,6 +130,7 @@
               <h3 class="panel-title">THC|CBD Mass Per Gram</h3>
             </div>
             <div class="panel-body">
+              <label id="cured_thc_mass_per_gram_calc"></label><br>
               <label id="cured_thc_mass_per_gram">0mg</label>
             </div>
           </div>
@@ -117,7 +140,8 @@
               <h3 class="panel-title">THC|CBD Mass Total</h3>
             </div>
             <div class="panel-body">
-              <label id="cured_thc_mass">0mg</label>
+              <label id="cured_thc_mass_calc"></label><br>
+              <label id="cured_thc_mass">0mg</label>            
             </div>
           </div>
         </div>
@@ -146,6 +170,7 @@
               <h3 class="panel-title">Butter After Loss (-25%)</h3>
             </div>
             <div class="panel-body">
+              <label id="butter_after_loss_calc"></label><br>
               <label id="butter_after_loss">0tbsp</label>
             </div>
           </div>
@@ -154,6 +179,7 @@
               <h3 class="panel-title">THC|CBD per g Butter</h3>
             </div>
             <div class="panel-body">
+              <label id="thc_per_g_butter_calc"></label><br>
               <label id="thc_per_g_butter">0mg</label>
             </div>
           </div> 
@@ -162,6 +188,7 @@
               <h3 class="panel-title">THC|CBD in a Full Stick of Butter</h3>
             </div>
             <div class="panel-body">
+              <label id="suba_per_stick_calc"></label><br>
               <label id="suba_per_stick">0mg</label>
             </div>
           </div>         
@@ -193,6 +220,7 @@
               <h3 class="panel-title">THC|CBD per Serving</h3>
             </div>
             <div class="panel-body">
+              <label id="thc_per_serving_calc"></label><br>
               <label id="thc_per_serving">0mg</label>
             </div>
           </div>
