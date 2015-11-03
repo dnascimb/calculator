@@ -12,30 +12,67 @@ shouldRound = false;
 // 1 tbsp (volume) = 14.18 g (mass)
 // 1 tsp (volume) = 4.72666667 g (mass)
 
+// LOSSES
+// - THC after curing: -2%
+// - THC after infusion with butter: -25%
+// - THC after infusion with oil: -20%
+// - Butter after infusion: -25%
+// - Oil after infusion: -20%
+
+// CHANGES (__NEED Adjustment for THC LOSS once in baking section__)
+// - show projected losses at each step of the way
+	// X THC after curing: -2%
+	// - THC after infusion with butter: -25%
+	// - THC after infusion with oil: -20%
+	// X Butter after infusion: -25%
+	// X Oil after infusion: -20%
+// - change calculations to take into account 
+//		seperate losses of each substance after infusion
+
+var constants = {
+   GRAMS_IN_TABLESPOON: 14.18,
+   BUTTER_LOSS: .25,
+   OIL_LOSS: .2,
+   SUBA_LOSS_AFTER_CURING: .02,
+   SUBA_LOSS_AFTER_BUTTER_INFUSION: .25,
+   SUBA_LOSS_AFTER_OIL_INFUSION: .2
+};
+Calculator.prototype.getConstantButterLoss = function(){return constants.BUTTER_LOSS;};
+Calculator.prototype.getConstantOilLoss = function(){return constants.OIL_LOSS;};
+Calculator.prototype.getConstantSubALossAfterCuring = function(){return constants.SUBA_LOSS_AFTER_CURING;};
+Calculator.prototype.getConstantSubALossAfterButterInfusion = function(){return constants.SUBA_LOSS_AFTER_BUTTER_INFUSION;};
+Calculator.prototype.getConstantSubALossAfterOilInfusion = function(){return constants.SUBA_LOSS_AFTER_OIL_INFUSION;};
+
 //
 // Constructor
 //
 function Calculator() {
-	this.opsa = 0;
-	this.cmsa = 0;
-	this.mrsc = 0;
+	this.subA_startingPercentage = 0;
+	this.subA_finalMass = 0;
+	this.subB_startingMassGrams = 0;
+	this.substanceALossPercentage = 20; //default
+	this.substanceBType = 0; //butter=0,oil=1
+	this.substanceBLoss = 25;
 }
-//
-// Constructor
-//
-function Calculator(subA_startingPercentage, subA_finalMass, subB_startingMass) {
-	this.opsa = subA_startingPercentage; //whole number
-	this.cmsa = subA_finalMass; //grams
-	this.mrsc = subB_startingMass * 14.18; //entered in tablespoons and we convert to grams
-}
+
 
 //
 // This function returns the cured percentage amount of SubstanceA
 //
 Calculator.prototype.getCuredSubAPercent = function() {
-	if(!this.opsa)
+//	if(!this.subA_startingPercentage || !this.substanceBLoss || !this.substanceBType)
+	if(!this.subA_startingPercentage)
 		return 0;
-	this.curedSubAPercent = this.opsa * .7;
+	//console.log("cured sub loss: " + this.substanceBLoss);
+	this.curedSubAPercent = this.subA_startingPercentage * (1-constants.SUBA_LOSS_AFTER_CURING);
+// COMMENTED AND WILL MOVE TO INFUSION SECTION
+//	if(this.substanceBType == 100)
+//		this.substanceBLoss = constants.BUTTER_LOSS;//butter
+//	else
+//		this.substanceBLoss = constants.OIL_LOSS;//oil
+
+//	this.curedSubAPercent = this.subA_startingPercentage * (1 - this.substanceBLoss);
+
 	if(shouldRound)
 		return this.curedSubAPercent.toFixed(2);
 	else
@@ -57,7 +94,9 @@ Calculator.prototype.getCuredSubACalculatedMassPerGram = function() {
 // This function returns the cured mass amount of SubstanceA (mg)
 //
 Calculator.prototype.getCuredSubACalculatedMassTotal = function() {
-	this.curedSubACalculatedMass = this.getCuredSubACalculatedMassPerGram() * this.cmsa;
+	if(!this.subA_finalMass)
+		return 0;
+	this.curedSubACalculatedMass = this.getCuredSubACalculatedMassPerGram() * this.subA_finalMass;
 	if(shouldRound)
 		return this.curedSubACalculatedMass.toFixed(2);
 	else
@@ -68,7 +107,7 @@ Calculator.prototype.getCuredSubACalculatedMassTotal = function() {
 // This function returns the SubstanceA (mg) mass amount per SubstanceB (g) mass amount
 Calculator.prototype.getSubAMassPerSingleSubBMassUnit = function() {
 	var a = this.getCuredSubACalculatedMassPerGram();
-	var b = this.getSubBMassAfterInfusion() * 14.18;
+	var b = this.getSubBMassAfterInfusion() * constants.GRAMS_IN_TABLESPOON;
 	this.curedSubAMassPerSingleSubBMassUnit = a / b;
 	if(shouldRound)
 		return this.curedSubAMassPerSingleSubBMassUnit.toFixed(2);
@@ -94,9 +133,15 @@ Calculator.prototype.getSubAMassPerSpecificSubBMass = function(value) {
 // This function returns the SubstanceB mass amount after infusion 
 //
 Calculator.prototype.getSubBMassAfterInfusion = function() {
-	if(!this.mrsc)
+	if(!this.subB_startingMassGrams)
 		return 0;
-	this.subB_massAfterInfusion = (this.mrsc * .75) / 14.18; // stored as grams then converted to tablespoons
+
+	if(this.substanceBType == 100)
+		this.substanceBLoss = constants.SUBA_LOSS_AFTER_BUTTER_INFUSION;//butter
+	else
+		this.substanceBLoss = constants.SUBA_LOSS_AFTER_OIL_INFUSION;//oil
+
+	this.subB_massAfterInfusion = (this.subB_startingMassGrams * (1-this.substanceBLoss)) / constants.GRAMS_IN_TABLESPOON; // stored as grams then converted to tablespoons
 	if(shouldRound)
 		return this.subB_massAfterInfusion.toFixed(2);
 	else
@@ -109,7 +154,7 @@ Calculator.prototype.getSubBMassAfterInfusion = function() {
 Calculator.prototype.getSubAMassPerNumberOfServings = function(subB_massInTablespoons, numberOfServings) {
 	if(!subB_massInTablespoons || !numberOfServings)
 		return 0;
-	this.subA_massPerServing = this.getSubAMassPerSpecificSubBMass(subB_massInTablespoons * 14.18) / numberOfServings;
+	this.subA_massPerServing = this.getSubAMassPerSpecificSubBMass(subB_massInTablespoons * constants.GRAMS_IN_TABLESPOON) / numberOfServings;
 	if(shouldRound)
 		return this.subA_massPerServing.toFixed(2);
 	else
@@ -130,7 +175,7 @@ Calculator.prototype.setShouldRound = function(value) {
 // 
 Calculator.prototype.setOriginalPercentageSubA = function(value) {
 	if(value)
-		this.opsa = value;
+		this.subA_startingPercentage = value;
 };
 
 //
@@ -138,7 +183,7 @@ Calculator.prototype.setOriginalPercentageSubA = function(value) {
 // 
 Calculator.prototype.setFinalSubAMass = function(value) {
 	if(value)
-		this.cmsa = value; //grams 
+		this.subA_finalMass = value; //grams 
 };
 
 //
@@ -146,5 +191,14 @@ Calculator.prototype.setFinalSubAMass = function(value) {
 // 
 Calculator.prototype.setMassResultSubB = function(value) {
 	if(value)
-		this.mrsc = value * 14.18; //entered in tablespoons and we convert to grams
+		this.subB_startingMassGrams = value * constants.GRAMS_IN_TABLESPOON; //entered in tablespoons and we convert to grams
+};
+
+//
+// This function sets the MassResultSubB property
+// 
+Calculator.prototype.setSubBType = function(value) {
+	console.log("value: " + value);
+	if(value)
+		this.substanceBType = value; //entered in tablespoons and we convert to grams
 };

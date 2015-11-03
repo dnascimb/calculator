@@ -1,24 +1,25 @@
 <html>
 <head>
 <title>The Calculator</title>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
-<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<link rel="stylesheet" href="external/bootstrap.min.css">
+<link rel="stylesheet" href="external/bootstrap-theme.min.css">
+<script type="text/javascript" src="external/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="calculator.js"></script>
 <script type="text/javascript">
 
-	function calculateAndDisplay(cannabis_starting_thc_percentage, cannabis_cured_mass, butter_amount) {
+	function calculateAndDisplay(cannabis_starting_thc_percentage, cannabis_cured_mass, subB_amount, subB_type) {
 		
 		var calc = new Calculator();
-		
+		console.log("calc subb_type: " + subB_type);
 		// set values for core variables
 		calc.setOriginalPercentageSubA(cannabis_starting_thc_percentage);
 		calc.setFinalSubAMass(cannabis_cured_mass);
-		calc.setMassResultSubB(butter_amount);
+		calc.setMassResultSubB(subB_amount);
+    calc.setSubBType(subB_type);
 
 		// set calculated values to display on screen
 		$("#cured_suba_percentage_calc").text(cannabis_starting_thc_percentage + " * "
-      + ".7 = ");
+      + (1-calc.getConstantSubALossAfterCuring()) + " = ");
     $("#cured_suba_percentage").text(calc.getCuredSubAPercent() + "%");
     
 		$("#cured_thc_mass_per_gram_calc").text(cannabis_starting_thc_percentage + " * "
@@ -29,8 +30,12 @@
       + cannabis_cured_mass + " = ");
 		$("#cured_thc_mass").text(calc.getCuredSubACalculatedMassTotal() + "mg");
     
-		$("#butter_after_loss_calc").text(butter_amount + " * "
-      + ".75 = ");
+    if(subB_type == 100)
+  		$("#butter_after_loss_calc").text(subB_amount + " * "
+        + calc.getConstantSubALossAfterButterInfusion() + " = ");
+    else
+      $("#butter_after_loss_calc").text(subB_amount + " * "
+        + calc.getConstantSubALossAfterOilInfusion() + " = ");
     $("#butter_after_loss").text(calc.getSubBMassAfterInfusion() + "tbsp");
 
     $("#thc_per_g_butter_calc").text(calc.getCuredSubACalculatedMassPerGram() + " / ("
@@ -42,28 +47,56 @@
     $("#suba_per_stick").text(calc.getSubAMassPerSpecificSubBMass(113) + "mg");
 
     $("#thc_per_serving_calc").text(calc.getSubAMassPerSingleSubBMassUnit() + " * (" 
-      + $.trim($("# ").val()) + " * 14.18) / "
+      + $.trim($("#cooking_subB_amount").val()) + " * 14.18) / "
       + $.trim($("#recipe_servings").val()) + " = ");
-		$("#thc_per_serving").text(calc.getSubAMassPerNumberOfServings($.trim($("#cooking_butter_amount").val()), $.trim($("#recipe_servings").val())) + "mg");
+		$("#thc_per_serving").text(calc.getSubAMassPerNumberOfServings($.trim($("#cooking_subB_amount").val()), 
+      $.trim($("#recipe_servings").val())) + "mg");
 	}
 
 	$(document).ready(function(){
     	
     	$("#cured_mass").blur(function(){
-        	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), $.trim($("#butter_amount").val()));
+        console.log("radio: " + $("input[name=radios]:checked").val());
+        	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), 
+            $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val());
     	});
     	$("#suba_percentage").blur(function(){
-        	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), $.trim($("#butter_amount").val()));
+        console.log("radio: " + $("input[name=radios]:checked").val());
+        	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), 
+            $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val());
     	});
-    	$("#butter_amount").blur(function(){
-        	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), $.trim($("#butter_amount").val()));
+    	$("#subB_amount").blur(function(){
+        console.log("radio: " + $("input[name=radios]:checked").val());
+        	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), 
+            $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val());
     	});
-		$("#cooking_butter_amount").blur(function(){
-        	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), $.trim($("#butter_amount").val()));
+		  $("#cooking_subB_amount").blur(function(){
+        console.log("radio: " + $("input[name=radios]:checked").val());
+        	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), 
+            $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val());
     	});
     	$("#recipe_servings").blur(function(){
-        	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), $.trim($("#butter_amount").val()));
+        console.log("radio: " + $("input[name=radios]:checked").val());
+        	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), 
+            $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val());
     	});
+      $("#radios-0").click(function(){
+        console.log("radio: " + $("input[name=radios]:checked").val());
+          $("#infusion_substance_loss_amount_label").text("Butter After Loss (-25%)");
+          $("#infusion_substance_per_unit_amount_label").text("THC|CBD per g Butter");
+          $("#infusion_substance_per_specific_units_label").text("THC|CBD in a Full Stick of Butter");
+          calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), $.trim($("#subB_amount").val()),
+            $("input[name=radios]:checked").val());
+      });
+      $("#radios-1").click(function(){
+        console.log("radio: " + $("input[name=radios]:checked").val());
+          $("#infusion_substance_loss_amount_label").text("Oil After Loss (-20%)");
+          $("#infusion_substance_per_unit_amount_label").text("THC|CBD per g Oil");
+          $("#infusion_substance_per_specific_units_label").text("THC|CBD in a Tablespoon of Oil");
+          calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), $.trim($("#subB_amount").val()),
+            $("input[name=radios]:checked").val());
+      });
+
     	
 
 
@@ -83,7 +116,7 @@
    				return false;
    			}
     	});
-    	$('#butter_amount').keydown(function(event){
+    	$('#subB_amount').keydown(function(event){
     		var keycode = (event.keyCode ? event.keyCode : event.which);
     		if((keycode < 48 || keycode > 57) && keycode != 127 && keycode != 8 && keycode != 190 && keycode != 9) {
         		event.preventDefault();
@@ -157,17 +190,30 @@
         &nbsp;
         <br>
 
-        <h1>Butter Infusion</h1>
+        <h1>Infusion</h1>
         <div id="inputsection2" class="col-md-6">
-			<form name="calcForm2">
-				<br><br><label>Starting Butter Amount: </label> 
-				<input name="butter_amount" id="butter_amount" class="input" placeholder="10.64"/> <label> tablespoons </label>
+			   <form name="calcForm2">
+				  <br><br>
+          <label class="" for="radios">Substance being infused to:</label>
+          
+            <label class="radio-inline" for="radios-0">
+              <input type="radio" name="radios" id="radios-0" value="100" checked="checked">
+              Butter
+            </label> 
+            <label class="radio-inline" for="radios-1">
+              <input type="radio" name="radios" id="radios-1" value="200">
+              Oil
+            </label> 
+          
+          <br><br><br>
+          <label>Starting Butter Amount: </label> 
+  				<input name="subB_amount" id="subB_amount" class="input" placeholder="10.64"/> <label> tablespoons </label>
 			</form>
 		</div>
 		<div id="results2" class="col-md-6">
           <div class="panel panel-primary">
             <div class="panel-heading">
-              <h3 class="panel-title">Butter After Loss (-25%)</h3>
+              <h3 class="panel-title" id="infusion_substance_loss_amount_label">Butter After Loss (-25%)</h3>
             </div>
             <div class="panel-body">
               <label id="butter_after_loss_calc"></label><br>
@@ -176,7 +222,7 @@
           </div>
           <div class="panel panel-primary">
             <div class="panel-heading">
-              <h3 class="panel-title">THC|CBD per g Butter</h3>
+              <h3 class="panel-title" id="infusion_substance_per_unit_amount_label">THC|CBD per g Butter</h3>
             </div>
             <div class="panel-body">
               <label id="thc_per_g_butter_calc"></label><br>
@@ -185,7 +231,7 @@
           </div> 
           <div class="panel panel-primary">
             <div class="panel-heading">
-              <h3 class="panel-title">THC|CBD in a Full Stick of Butter</h3>
+              <h3 class="panel-title" id="infusion_substance_per_specific_units_label">THC|CBD in a Full Stick of Butter</h3>
             </div>
             <div class="panel-body">
               <label id="suba_per_stick_calc"></label><br>
@@ -209,7 +255,7 @@
 		<div id="inputsection3" class="col-md-6">
 			<form name="calcForm3">
 				<br><br><label>Butter Amount: </label> 
-				<input name="cooking_butter_amount" id="cooking_butter_amount" class="input" placeholder="4"/> <label> tablespoons </label>
+				<input name="cooking_subB_amount" id="cooking_subB_amount" class="input" placeholder="4"/> <label> tablespoons </label>
 				<br><br><label>Recipe Number of Servings: </label> 
 				<input name="recipe_servings" id="recipe_servings" class="input" placeholder="12"/>
 			</form>
