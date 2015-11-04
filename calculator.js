@@ -19,15 +19,6 @@ shouldRound = false;
 // - Butter after infusion: -25%
 // - Oil after infusion: -20%
 
-// CHANGES (__NEED Adjustment for THC LOSS once in baking section__)
-// - show projected losses at each step of the way
-	// X THC after curing: -2%
-	// - THC after infusion with butter: -25%
-	// - THC after infusion with oil: -20%
-	// X Butter after infusion: -25%
-	// X Oil after infusion: -20%
-// - change calculations to take into account 
-//		seperate losses of each substance after infusion
 
 var constants = {
    GRAMS_IN_TABLESPOON: 14.18,
