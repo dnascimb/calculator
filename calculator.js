@@ -53,6 +53,8 @@ function Calculator() {
 	this.substanceALossPercentage = 20; //default
 	this.substanceBType = 0; //butter=0,oil=1
 	this.substanceBLoss = 25;
+	this.subAPercentAfterInfusion = 0;
+	this.subACalculatedMassPerGramForInfusion = 0;
 }
 
 
@@ -60,23 +62,33 @@ function Calculator() {
 // This function returns the cured percentage amount of SubstanceA
 //
 Calculator.prototype.getCuredSubAPercent = function() {
-//	if(!this.subA_startingPercentage || !this.substanceBLoss || !this.substanceBType)
 	if(!this.subA_startingPercentage)
 		return 0;
-	//console.log("cured sub loss: " + this.substanceBLoss);
 	this.curedSubAPercent = this.subA_startingPercentage * (1-constants.SUBA_LOSS_AFTER_CURING);
-// COMMENTED AND WILL MOVE TO INFUSION SECTION
-//	if(this.substanceBType == 100)
-//		this.substanceBLoss = constants.BUTTER_LOSS;//butter
-//	else
-//		this.substanceBLoss = constants.OIL_LOSS;//oil
-
-//	this.curedSubAPercent = this.subA_startingPercentage * (1 - this.substanceBLoss);
-
 	if(shouldRound)
 		return this.curedSubAPercent.toFixed(2);
 	else
 		return this.curedSubAPercent;
+};
+
+//
+// This function returns the percentage amount of SubstanceA after infusion with SubstanceB
+//
+Calculator.prototype.getSubAPercentAfterInfusion = function() {
+	if(!this.subA_startingPercentage || !this.substanceBLoss || !this.substanceBType)
+		return 0;
+	//console.log("cured sub loss: " + this.substanceBLoss);
+	if(this.substanceBType == 100)
+		this.substanceBLoss = constants.BUTTER_LOSS;//butter
+	else
+		this.substanceBLoss = constants.OIL_LOSS;//oil
+
+	this.subAPercentAfterInfusion = this.subA_startingPercentage * (1 - this.substanceBLoss);
+
+	if(shouldRound)
+		return this.subAPercentAfterInfusion.toFixed(2);
+	else
+		return this.subAPercentAfterInfusion;
 };
 
 //
@@ -88,6 +100,17 @@ Calculator.prototype.getCuredSubACalculatedMassPerGram = function() {
 		return this.curedSubACalculatedMassPerGram.toFixed(2);
 	else
 		return this.curedSubACalculatedMassPerGram;
+};
+
+//
+// This function returns the mass amount of SubstanceA (mg) per of cannabis used in infusion calculation
+//
+Calculator.prototype.getSubACalculatedMassPerGramForInfusion = function() {
+	this.subACalculatedMassPerGramForInfusion = this.getSubAPercentAfterInfusion() * 10;
+	if(shouldRound)
+		return this.subACalculatedMassPerGramForInfusion.toFixed(2);
+	else
+		return this.subACalculatedMassPerGramForInfusion;
 };
 
 //
@@ -106,7 +129,7 @@ Calculator.prototype.getCuredSubACalculatedMassTotal = function() {
 //
 // This function returns the SubstanceA (mg) mass amount per SubstanceB (g) mass amount
 Calculator.prototype.getSubAMassPerSingleSubBMassUnit = function() {
-	var a = this.getCuredSubACalculatedMassPerGram();
+	var a = this.getSubACalculatedMassPerGramForInfusion();
 	var b = this.getSubBMassAfterInfusion() * constants.GRAMS_IN_TABLESPOON;
 	this.curedSubAMassPerSingleSubBMassUnit = a / b;
 	if(shouldRound)
@@ -198,7 +221,7 @@ Calculator.prototype.setMassResultSubB = function(value) {
 // This function sets the MassResultSubB property
 // 
 Calculator.prototype.setSubBType = function(value) {
-	console.log("value: " + value);
+	//console.log("value: " + value);
 	if(value)
 		this.substanceBType = value; //entered in tablespoons and we convert to grams
 };

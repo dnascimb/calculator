@@ -10,7 +10,7 @@
 	function calculateAndDisplay(cannabis_starting_thc_percentage, cannabis_cured_mass, subB_amount, subB_type) {
 		
 		var calc = new Calculator();
-		console.log("calc subb_type: " + subB_type);
+		//console.log("calc subb_type: " + subB_type);
 		// set values for core variables
 		calc.setOriginalPercentageSubA(cannabis_starting_thc_percentage);
 		calc.setFinalSubAMass(cannabis_cured_mass);
@@ -22,8 +22,8 @@
       + (1-calc.getConstantSubALossAfterCuring()) + " = ");
     $("#cured_suba_percentage").text(calc.getCuredSubAPercent() + "%");
     
-		$("#cured_thc_mass_per_gram_calc").text(cannabis_starting_thc_percentage + " * "
-      + ".10 = ");
+		$("#cured_thc_mass_per_gram_calc").text(calc.getCuredSubAPercent() + " * "
+      + " .10 = ");
     $("#cured_thc_mass_per_gram").text(calc.getCuredSubACalculatedMassPerGram() + "mg");
     
     $("#cured_thc_mass_calc").text(calc.getCuredSubACalculatedMassPerGram() + " * "
@@ -38,7 +38,7 @@
         + calc.getConstantSubALossAfterOilInfusion() + " = ");
     $("#butter_after_loss").text(calc.getSubBMassAfterInfusion() + "tbsp");
 
-    $("#thc_per_g_butter_calc").text(calc.getCuredSubACalculatedMassPerGram() + " / ("
+    $("#thc_per_g_butter_calc").text(calc.getSubACalculatedMassPerGramForInfusion() + " / ("
       + calc.getSubBMassAfterInfusion() + " * 14.18) = ");
 		$("#thc_per_g_butter").text(calc.getSubAMassPerSingleSubBMassUnit() + "mg");
 		
@@ -56,32 +56,32 @@
 	$(document).ready(function(){
     	
     	$("#cured_mass").blur(function(){
-        console.log("radio: " + $("input[name=radios]:checked").val());
+        //console.log("radio: " + $("input[name=radios]:checked").val());
         	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), 
             $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val());
     	});
     	$("#suba_percentage").blur(function(){
-        console.log("radio: " + $("input[name=radios]:checked").val());
+        //console.log("radio: " + $("input[name=radios]:checked").val());
         	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), 
             $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val());
     	});
     	$("#subB_amount").blur(function(){
-        console.log("radio: " + $("input[name=radios]:checked").val());
+        //console.log("radio: " + $("input[name=radios]:checked").val());
         	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), 
             $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val());
     	});
 		  $("#cooking_subB_amount").blur(function(){
-        console.log("radio: " + $("input[name=radios]:checked").val());
+        //console.log("radio: " + $("input[name=radios]:checked").val());
         	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), 
             $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val());
     	});
     	$("#recipe_servings").blur(function(){
-        console.log("radio: " + $("input[name=radios]:checked").val());
+        //console.log("radio: " + $("input[name=radios]:checked").val());
         	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), 
             $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val());
     	});
       $("#radios-0").click(function(){
-        console.log("radio: " + $("input[name=radios]:checked").val());
+        //console.log("radio: " + $("input[name=radios]:checked").val());
           $("#infusion_substance_loss_amount_label").text("Butter After Loss (-25%)");
           $("#infusion_substance_per_unit_amount_label").text("THC|CBD per g Butter");
           $("#infusion_substance_per_specific_units_label").text("THC|CBD in a Full Stick of Butter");
@@ -89,7 +89,7 @@
             $("input[name=radios]:checked").val());
       });
       $("#radios-1").click(function(){
-        console.log("radio: " + $("input[name=radios]:checked").val());
+        //console.log("radio: " + $("input[name=radios]:checked").val());
           $("#infusion_substance_loss_amount_label").text("Oil After Loss (-20%)");
           $("#infusion_substance_per_unit_amount_label").text("THC|CBD per g Oil");
           $("#infusion_substance_per_specific_units_label").text("THC|CBD in a Tablespoon of Oil");
