@@ -21,10 +21,11 @@ shouldRound = false;
 
 
 var constants = {
-   GRAMS_IN_TABLESPOON: 14.18,
+   BUTTER_GRAMS_IN_TABLESPOON: 14.18,
+   OIL_GRAMS_IN_TABLESPOON: 13.72,
    BUTTER_LOSS: .25,
    OIL_LOSS: .2,
-   SUBA_LOSS_AFTER_CURING: .02,
+   SUBA_LOSS_AFTER_CURING: 2,
    SUBA_LOSS_AFTER_BUTTER_INFUSION: .25,
    SUBA_LOSS_AFTER_OIL_INFUSION: .2
 };
@@ -55,7 +56,7 @@ function Calculator() {
 Calculator.prototype.getCuredSubAPercent = function() {
 	if(!this.subA_startingPercentage)
 		return 0;
-	this.curedSubAPercent = this.subA_startingPercentage * (1-constants.SUBA_LOSS_AFTER_CURING);
+	this.curedSubAPercent = this.subA_startingPercentage - constants.SUBA_LOSS_AFTER_CURING;
 	if(shouldRound)
 		return this.curedSubAPercent.toFixed(2);
 	else
@@ -74,7 +75,7 @@ Calculator.prototype.getSubAPercentAfterInfusion = function() {
 	else
 		this.substanceBLoss = constants.OIL_LOSS;//oil
 
-	this.subAPercentAfterInfusion = this.subA_startingPercentage * (1 - this.substanceBLoss);
+	this.subAPercentAfterInfusion = this.getCuredSubAPercent() * (1 - this.substanceBLoss);
 
 	if(shouldRound)
 		return this.subAPercentAfterInfusion.toFixed(2);
@@ -120,13 +121,26 @@ Calculator.prototype.getCuredSubACalculatedMassTotal = function() {
 //
 // This function returns the SubstanceA (mg) mass amount per SubstanceB (g) mass amount
 Calculator.prototype.getSubAMassPerSingleSubBMassUnit = function() {
-	var a = this.getSubACalculatedMassPerGramForInfusion();
-	var b = this.getSubBMassAfterInfusion() * constants.GRAMS_IN_TABLESPOON;
+	if(this.substanceBType)
+	{
+		var a = this.getSubACalculatedMassPerGramForInfusion();
+
+	if(this.substanceBType == 100)
+		var b = this.getSubBMassAfterInfusion() * constants.BUTTER_GRAMS_IN_TABLESPOON;
+	else
+		var b = this.getSubBMassAfterInfusion() * constants.OIL_GRAMS_IN_TABLESPOON;
+	
+	console.log("a: " + a);
+	console.log("b: " + b);
+
 	this.curedSubAMassPerSingleSubBMassUnit = a / b;
 	if(shouldRound)
 		return this.curedSubAMassPerSingleSubBMassUnit.toFixed(2);
 	else
 		return this.curedSubAMassPerSingleSubBMassUnit;
+	}
+	else
+		return 0;
 };
 
 
@@ -155,7 +169,15 @@ Calculator.prototype.getSubBMassAfterInfusion = function() {
 	else
 		this.substanceBLoss = constants.SUBA_LOSS_AFTER_OIL_INFUSION;//oil
 
-	this.subB_massAfterInfusion = (this.subB_startingMassGrams * (1-this.substanceBLoss)) / constants.GRAMS_IN_TABLESPOON; // stored as grams then converted to tablespoons
+	var a = (this.subB_startingMassGrams * (1-this.substanceBLoss))
+	if(this.substanceBType == 100)
+		var b = constants.BUTTER_GRAMS_IN_TABLESPOON;
+	else
+		var b = constants.OIL_GRAMS_IN_TABLESPOON;
+
+	console.log("2a: " + a);
+	console.log("2b: " + b);
+	this.subB_massAfterInfusion = a / b;
 	if(shouldRound)
 		return this.subB_massAfterInfusion.toFixed(2);
 	else
@@ -168,7 +190,13 @@ Calculator.prototype.getSubBMassAfterInfusion = function() {
 Calculator.prototype.getSubAMassPerNumberOfServings = function(subB_massInTablespoons, numberOfServings) {
 	if(!subB_massInTablespoons || !numberOfServings)
 		return 0;
-	this.subA_massPerServing = this.getSubAMassPerSpecificSubBMass(subB_massInTablespoons * constants.GRAMS_IN_TABLESPOON) / numberOfServings;
+
+	if(this.substanceBType == 100)
+		this.subA_massPerServing = this.getSubAMassPerSpecificSubBMass(subB_massInTablespoons * constants.BUTTER_GRAMS_IN_TABLESPOON) / numberOfServings;
+	else
+		this.subA_massPerServing = this.getSubAMassPerSpecificSubBMass(subB_massInTablespoons * constants.OIL_GRAMS_IN_TABLESPOON) / numberOfServings;
+		
+
 	if(shouldRound)
 		return this.subA_massPerServing.toFixed(2);
 	else
@@ -205,7 +233,12 @@ Calculator.prototype.setFinalSubAMass = function(value) {
 // 
 Calculator.prototype.setMassResultSubB = function(value) {
 	if(value)
-		this.subB_startingMassGrams = value * constants.GRAMS_IN_TABLESPOON; //entered in tablespoons and we convert to grams
+	{
+		if(this.substanceBType == 100)
+			this.subB_startingMassGrams = value * constants.BUTTER_GRAMS_IN_TABLESPOON; //entered in tablespoons and we convert to grams
+		else
+			this.subB_startingMassGrams = value * constants.OIL_GRAMS_IN_TABLESPOON;
+	}
 };
 
 //

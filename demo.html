@@ -18,8 +18,8 @@
     calc.setSubBType(subB_type);
 
 		// set calculated values to display on screen
-		$("#cured_suba_percentage_calc").text(cannabis_starting_thc_percentage + " * "
-      + (1-calc.getConstantSubALossAfterCuring()) + " = ");
+		$("#cured_suba_percentage_calc").text(cannabis_starting_thc_percentage + " - "
+      + calc.getConstantSubALossAfterCuring() + " = ");
     $("#cured_suba_percentage").text(calc.getCuredSubAPercent() + "%");
     
 		$("#cured_thc_mass_per_gram_calc").text(calc.getCuredSubAPercent() + " * "
@@ -38,17 +38,28 @@
         + calc.getConstantSubALossAfterOilInfusion() + " = ");
     $("#butter_after_loss").text(calc.getSubBMassAfterInfusion() + "tbsp");
 
-    $("#thc_per_g_butter_calc").text(calc.getSubACalculatedMassPerGramForInfusion() + " / ("
-      + calc.getSubBMassAfterInfusion() + " * 14.18) = ");
+    if(subB_type == 100)
+      $("#thc_per_g_butter_calc").text(calc.getSubACalculatedMassPerGramForInfusion() + " / ("
+        + calc.getSubBMassAfterInfusion() + " * 14.18) = ");
+    else
+      $("#thc_per_g_butter_calc").text(calc.getSubACalculatedMassPerGramForInfusion() + " / ("
+        + calc.getSubBMassAfterInfusion() + " * 13.72) = ");
+
+    console.log("**: " + calc.getSubAMassPerSingleSubBMassUnit());
 		$("#thc_per_g_butter").text(calc.getSubAMassPerSingleSubBMassUnit() + "mg");
 		
     $("#suba_per_stick_calc").text(calc.getSubAMassPerSingleSubBMassUnit() + " * "
       + "113 = ");
     $("#suba_per_stick").text(calc.getSubAMassPerSpecificSubBMass(113) + "mg");
 
-    $("#thc_per_serving_calc").text(calc.getSubAMassPerSingleSubBMassUnit() + " * (" 
-      + $.trim($("#cooking_subB_amount").val()) + " * 14.18) / "
-      + $.trim($("#recipe_servings").val()) + " = ");
+    if(subB_type == 100)
+      $("#thc_per_serving_calc").text(calc.getSubAMassPerSingleSubBMassUnit() + " * (" 
+        + $.trim($("#cooking_subB_amount").val()) + " * 14.18) / "
+        + $.trim($("#recipe_servings").val()) + " = ");
+    else
+      $("#thc_per_serving_calc").text(calc.getSubAMassPerSingleSubBMassUnit() + " * (" 
+        + $.trim($("#cooking_subB_amount").val()) + " * 13.72) / "
+        + $.trim($("#recipe_servings").val()) + " = ");
 		$("#thc_per_serving").text(calc.getSubAMassPerNumberOfServings($.trim($("#cooking_subB_amount").val()), 
       $.trim($("#recipe_servings").val())) + "mg");
 	}
