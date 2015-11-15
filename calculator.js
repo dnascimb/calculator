@@ -21,6 +21,7 @@ shouldRound = false;
 
 
 var constants = {
+   INFUSION_TYPE_BUTTER: 100,
    BUTTER_GRAMS_IN_TABLESPOON: 14.18,
    OIL_GRAMS_IN_TABLESPOON: 13.72,
    BUTTER_LOSS: .25,
@@ -43,7 +44,7 @@ function Calculator() {
 	this.subA_finalMass = 0;
 	this.subB_startingMassGrams = 0;
 	this.substanceALossPercentage = 20; //default
-	this.substanceBType = 0; //butter=0,oil=1
+	this.substanceBType = constants.INFUSION_TYPE_BUTTER; //butter=100,oil=1
 	this.substanceBLoss = 25;
 	this.subAPercentAfterInfusion = 0;
 	this.subACalculatedMassPerGramForInfusion = 0;
@@ -70,7 +71,7 @@ Calculator.prototype.getSubAPercentAfterInfusion = function() {
 	if(!this.subA_startingPercentage || !this.substanceBLoss || !this.substanceBType)
 		return 0;
 	//console.log("cured sub loss: " + this.substanceBLoss);
-	if(this.substanceBType == 100)
+	if(this.substanceBType == constants.INFUSION_TYPE_BUTTER)
 		this.substanceBLoss = constants.BUTTER_LOSS;//butter
 	else
 		this.substanceBLoss = constants.OIL_LOSS;//oil
@@ -125,13 +126,13 @@ Calculator.prototype.getSubAMassPerSingleSubBMassUnit = function() {
 	{
 		var a = this.getSubACalculatedMassPerGramForInfusion();
 
-	if(this.substanceBType == 100)
+	if(this.substanceBType == constants.INFUSION_TYPE_BUTTER)
 		var b = this.getSubBMassAfterInfusion() * constants.BUTTER_GRAMS_IN_TABLESPOON;
 	else
 		var b = this.getSubBMassAfterInfusion() * constants.OIL_GRAMS_IN_TABLESPOON;
 	
-	console.log("a: " + a);
-	console.log("b: " + b);
+//	console.log("a: " + a);
+//	console.log("b: " + b);
 
 	this.curedSubAMassPerSingleSubBMassUnit = a / b;
 	if(shouldRound)
@@ -164,19 +165,20 @@ Calculator.prototype.getSubBMassAfterInfusion = function() {
 	if(!this.subB_startingMassGrams)
 		return 0;
 
-	if(this.substanceBType == 100)
+	if(this.substanceBType == constants.INFUSION_TYPE_BUTTER)
 		this.substanceBLoss = constants.SUBA_LOSS_AFTER_BUTTER_INFUSION;//butter
 	else
 		this.substanceBLoss = constants.SUBA_LOSS_AFTER_OIL_INFUSION;//oil
 
 	var a = (this.subB_startingMassGrams * (1-this.substanceBLoss))
-	if(this.substanceBType == 100)
+	if(this.substanceBType == constants.INFUSION_TYPE_BUTTER)
 		var b = constants.BUTTER_GRAMS_IN_TABLESPOON;
 	else
 		var b = constants.OIL_GRAMS_IN_TABLESPOON;
 
-	console.log("2a: " + a);
-	console.log("2b: " + b);
+//	console.log("2a: " + a);
+//	console.log("2b: " + b);
+//	console.log("this.subB_startingMassGrams: " + this.subB_startingMassGrams);
 	this.subB_massAfterInfusion = a / b;
 	if(shouldRound)
 		return this.subB_massAfterInfusion.toFixed(2);
@@ -191,7 +193,7 @@ Calculator.prototype.getSubAMassPerNumberOfServings = function(subB_massInTables
 	if(!subB_massInTablespoons || !numberOfServings)
 		return 0;
 
-	if(this.substanceBType == 100)
+	if(this.substanceBType == constants.INFUSION_TYPE_BUTTER)
 		this.subA_massPerServing = this.getSubAMassPerSpecificSubBMass(subB_massInTablespoons * constants.BUTTER_GRAMS_IN_TABLESPOON) / numberOfServings;
 	else
 		this.subA_massPerServing = this.getSubAMassPerSpecificSubBMass(subB_massInTablespoons * constants.OIL_GRAMS_IN_TABLESPOON) / numberOfServings;
@@ -234,11 +236,16 @@ Calculator.prototype.setFinalSubAMass = function(value) {
 Calculator.prototype.setMassResultSubB = function(value) {
 	if(value)
 	{
-		if(this.substanceBType == 100)
+//		console.log("value: " + value);
+//		console.log("constants.BUTTER_GRAMS_IN_TABLESPOON: " + constants.BUTTER_GRAMS_IN_TABLESPOON);
+		if(this.substanceBType == constants.INFUSION_TYPE_BUTTER) {
+//			console.log("mult: " + (value * constants.BUTTER_GRAMS_IN_TABLESPOON));
 			this.subB_startingMassGrams = value * constants.BUTTER_GRAMS_IN_TABLESPOON; //entered in tablespoons and we convert to grams
-		else
+		} else {
 			this.subB_startingMassGrams = value * constants.OIL_GRAMS_IN_TABLESPOON;
+		}
 	}
+//	console.log("subB_startingMassGrams orig: " + this.subB_startingMassGrams);
 };
 
 //

@@ -3,6 +3,14 @@
 <title>The Calculator</title>
 <link rel="stylesheet" href="external/bootstrap.min.css">
 <link rel="stylesheet" href="external/bootstrap-theme.min.css">
+<style type="text/css">
+  .tg  {border-collapse:collapse;border-spacing:0;}
+  .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+  .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+  .tg .tg-3ojc{font-weight:bold;color:#333333;vertical-align:top}
+  .tg .tg-9hbo{font-weight:bold;vertical-align:top}
+  .tg .tg-yw4l{vertical-align:top}
+</style>
 <script type="text/javascript" src="external/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="calculator.js"></script>
 <script type="text/javascript">
@@ -30,12 +38,16 @@
       + cannabis_cured_mass + " = ");
 		$("#cured_thc_mass").text(calc.getCuredSubACalculatedMassTotal() + "mg");
     
-    if(subB_type == 100)
+    if(subB_type == 100) {
   		$("#butter_after_loss_calc").text(subB_amount + " * "
-        + calc.getConstantSubALossAfterButterInfusion() + " = ");
-    else
+        + (1-calc.getConstantSubALossAfterButterInfusion())+ " = ");
+      //$("#butter_after_loss").text(calc.getSubBMassAfterInfusion() / 14.18 + "tbsp");
+    }
+    else {
       $("#butter_after_loss_calc").text(subB_amount + " * "
-        + calc.getConstantSubALossAfterOilInfusion() + " = ");
+        + (1-calc.getConstantSubALossAfterOilInfusion()) + " = ");
+      //$("#butter_after_loss").text(calc.getSubBMassAfterInfusion() / 13.72 + "tbsp");
+    }
     $("#butter_after_loss").text(calc.getSubBMassAfterInfusion() + "tbsp");
 
     if(subB_type == 100)
@@ -45,12 +57,16 @@
       $("#thc_per_g_butter_calc").text(calc.getSubACalculatedMassPerGramForInfusion() + " / ("
         + calc.getSubBMassAfterInfusion() + " * 13.72) = ");
 
-    console.log("**: " + calc.getSubAMassPerSingleSubBMassUnit());
 		$("#thc_per_g_butter").text(calc.getSubAMassPerSingleSubBMassUnit() + "mg");
-		
-    $("#suba_per_stick_calc").text(calc.getSubAMassPerSingleSubBMassUnit() + " * "
+    if(subB_type == 100) {
+      $("#suba_per_stick_calc").text(calc.getSubAMassPerSingleSubBMassUnit() + " * "
       + "113 = ");
-    $("#suba_per_stick").text(calc.getSubAMassPerSpecificSubBMass(113) + "mg");
+      $("#suba_per_stick").text(calc.getSubAMassPerSpecificSubBMass(113) + "mg");
+    } else {
+      $("#suba_per_stick_calc").text(calc.getSubAMassPerSingleSubBMassUnit() + " * "
+      + "27.4 = ");
+      $("#suba_per_stick").text(calc.getSubAMassPerSpecificSubBMass(27.4) + "mg");
+    }
 
     if(subB_type == 100)
       $("#thc_per_serving_calc").text(calc.getSubAMassPerSingleSubBMassUnit() + " * (" 
@@ -96,6 +112,9 @@
           $("#infusion_substance_loss_amount_label").text("Butter After Loss (-25%)");
           $("#infusion_substance_per_unit_amount_label").text("THC|CBD per g Butter");
           $("#infusion_substance_per_specific_units_label").text("THC|CBD in a Full Stick of Butter");
+          $("#infusion_substance_label").text("Butter");
+          $("#baking_substance_label").text("Butter");
+          $("#cooking_substance_label").text("Butter");
           calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), $.trim($("#subB_amount").val()),
             $("input[name=radios]:checked").val());
       });
@@ -103,7 +122,10 @@
         //console.log("radio: " + $("input[name=radios]:checked").val());
           $("#infusion_substance_loss_amount_label").text("Oil After Loss (-20%)");
           $("#infusion_substance_per_unit_amount_label").text("THC|CBD per g Oil");
-          $("#infusion_substance_per_specific_units_label").text("THC|CBD in a Tablespoon of Oil");
+          $("#infusion_substance_per_specific_units_label").text("THC|CBD in an ounce of Canna-oil");
+          $("#infusion_substance_label").text("Oil");
+          $("#baking_substance_label").text("Oil");
+          $("#cooking_substance_label").text("Oil");
           calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), $.trim($("#subB_amount").val()),
             $("input[name=radios]:checked").val());
       });
@@ -217,8 +239,56 @@
             </label> 
           
           <br><br><br>
-          <label>Starting Butter Amount: </label> 
+          <label>Starting <span id="infusion_substance_label">Butter</span> Amount: </label> 
   				<input name="subB_amount" id="subB_amount" class="input" placeholder="10.64"/> <label> tablespoons </label>
+          <br><br>
+          <div id="myMeasurementChart">
+            
+            <table class="tg">
+              <tr>
+                <th class="tg-3ojc">Butter</th>
+                <th class="tg-9hbo">Grams</th>
+                <th class="tg-9hbo">Oil</th>
+                <th class="tg-9hbo">Grams</th>
+              </tr>
+              <tr>
+                <td class="tg-yw4l">1 Stick</td>
+                <td class="tg-yw4l">113.4</td>
+                <td class="tg-yw4l">1 cup</td>
+                <td class="tg-yw4l">219.55</td>
+              </tr>
+              <tr>
+                <td class="tg-yw4l">1 cup</td>
+                <td class="tg-yw4l">226.8</td>
+                <td class="tg-yw4l">&frac34; cup</td>
+                <td class="tg-yw4l">164.67</td>
+              </tr>
+              <tr>
+                <td class="tg-yw4l">&frac34; cup</td>
+                <td class="tg-yw4l">170.1</td>
+                <td class="tg-yw4l">&frac12; cup</td>
+                <td class="tg-yw4l">109.78</td>
+              </tr>
+              <tr>
+                <td class="tg-yw4l">&frac12; cup</td>
+                <td class="tg-yw4l">113.4</td>
+                <td class="tg-yw4l">&frac14; cup</td>
+                <td class="tg-yw4l">54.89</td>
+              </tr>
+              <tr>
+                <td class="tg-yw4l">&frac14; cup</td>
+                <td class="tg-yw4l">56.7</td>
+                <td class="tg-yw4l">1 Tablespoon</td>
+                <td class="tg-yw4l">13.72</td>
+              </tr>
+              <tr>
+                <td class="tg-yw4l">1 Tablespoon</td>
+                <td class="tg-yw4l">14.18</td>
+                <td class="tg-yw4l">1 fluid ounce</td>
+                <td class="tg-yw4l">27.44</td>
+              </tr>
+            </table>
+          </div>
 			</form>
 		</div>
 		<div id="results2" class="col-md-6">
@@ -262,10 +332,10 @@
         &nbsp;
         <br>
 
-        <h1>Baking with Butter</h1>
+        <h1>Baking and Cooking with <span id="baking_substance_label">Butter</span></h1>
 		<div id="inputsection3" class="col-md-6">
 			<form name="calcForm3">
-				<br><br><label>Butter Amount: </label> 
+				<br><br><label><span id="cooking_substance_label">Butter</span> Amount: </label> 
 				<input name="cooking_subB_amount" id="cooking_subB_amount" class="input" placeholder="4"/> <label> tablespoons </label>
 				<br><br><label>Recipe Number of Servings: </label> 
 				<input name="recipe_servings" id="recipe_servings" class="input" placeholder="12"/>
