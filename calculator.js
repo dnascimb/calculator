@@ -4,7 +4,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-shouldRound = false;
+
 
 // - create a conversion table with this + pic:
 // 1 stick = 8 tbsp
@@ -48,6 +48,7 @@ function Calculator() {
 	this.substanceBLoss = 25;
 	this.subAPercentAfterInfusion = 0;
 	this.subACalculatedMassPerGramForInfusion = 0;
+	this.shouldRound = false;
 }
 
 
@@ -58,7 +59,7 @@ Calculator.prototype.getCuredSubAPercent = function() {
 	if(!this.subA_startingPercentage)
 		return 0;
 	this.curedSubAPercent = this.subA_startingPercentage - constants.SUBA_LOSS_AFTER_CURING;
-	if(shouldRound)
+	if(this.shouldRound)
 		return this.curedSubAPercent.toFixed(2);
 	else
 		return this.curedSubAPercent;
@@ -78,7 +79,7 @@ Calculator.prototype.getSubAPercentAfterInfusion = function() {
 
 	this.subAPercentAfterInfusion = this.getCuredSubAPercent() * (1 - this.substanceBLoss);
 
-	if(shouldRound)
+	if(this.shouldRound)
 		return this.subAPercentAfterInfusion.toFixed(2);
 	else
 		return this.subAPercentAfterInfusion;
@@ -89,7 +90,7 @@ Calculator.prototype.getSubAPercentAfterInfusion = function() {
 //
 Calculator.prototype.getCuredSubACalculatedMassPerGram = function() {
 	this.curedSubACalculatedMassPerGram = this.getCuredSubAPercent() * 10;
-	if(shouldRound)
+	if(this.shouldRound)
 		return this.curedSubACalculatedMassPerGram.toFixed(2);
 	else
 		return this.curedSubACalculatedMassPerGram;
@@ -100,7 +101,7 @@ Calculator.prototype.getCuredSubACalculatedMassPerGram = function() {
 //
 Calculator.prototype.getSubACalculatedMassPerGramForInfusion = function() {
 	this.subACalculatedMassPerGramForInfusion = this.getSubAPercentAfterInfusion() * 10;
-	if(shouldRound)
+	if(this.shouldRound)
 		return this.subACalculatedMassPerGramForInfusion.toFixed(2);
 	else
 		return this.subACalculatedMassPerGramForInfusion;
@@ -113,7 +114,7 @@ Calculator.prototype.getCuredSubACalculatedMassTotal = function() {
 	if(!this.subA_finalMass)
 		return 0;
 	this.curedSubACalculatedMass = this.getCuredSubACalculatedMassPerGram() * this.subA_finalMass;
-	if(shouldRound)
+	if(this.shouldRound)
 		return this.curedSubACalculatedMass.toFixed(2);
 	else
 		return this.curedSubACalculatedMass;
@@ -135,7 +136,7 @@ Calculator.prototype.getSubAMassPerSingleSubBMassUnit = function() {
 //	console.log("b: " + b);
 
 	this.curedSubAMassPerSingleSubBMassUnit = a / b;
-	if(shouldRound)
+	if(this.shouldRound)
 		return this.curedSubAMassPerSingleSubBMassUnit.toFixed(2);
 	else
 		return this.curedSubAMassPerSingleSubBMassUnit;
@@ -152,7 +153,7 @@ Calculator.prototype.getSubAMassPerSpecificSubBMass = function(value) {
 	if(!value)
 		return 0;
 	this.curedSubAMassPerCertainAmountofSubBMass = this.getSubAMassPerSingleSubBMassUnit() * value;
-	if(shouldRound)
+	if(this.shouldRound)
 		return this.curedSubAMassPerCertainAmountofSubBMass.toFixed(2);
 	else
 		return this.curedSubAMassPerCertainAmountofSubBMass;
@@ -180,7 +181,7 @@ Calculator.prototype.getSubBMassAfterInfusion = function() {
 //	console.log("2b: " + b);
 //	console.log("this.subB_startingMassGrams: " + this.subB_startingMassGrams);
 	this.subB_massAfterInfusion = a / b;
-	if(shouldRound)
+	if(this.shouldRound)
 		return this.subB_massAfterInfusion.toFixed(2);
 	else
 		return this.subB_massAfterInfusion;
@@ -199,7 +200,7 @@ Calculator.prototype.getSubAMassPerNumberOfServings = function(subB_massInTables
 		this.subA_massPerServing = this.getSubAMassPerSpecificSubBMass(subB_massInTablespoons * constants.OIL_GRAMS_IN_TABLESPOON) / numberOfServings;
 		
 
-	if(shouldRound)
+	if(this.shouldRound)
 		return this.subA_massPerServing.toFixed(2);
 	else
 		return this.subA_massPerServing;
@@ -207,7 +208,7 @@ Calculator.prototype.getSubAMassPerNumberOfServings = function(subB_massInTables
 
 
 //
-// This function sets the shouldRound property
+// This function sets the this.shouldRound property
 // http://stackoverflow.com/questions/28814585/how-to-check-if-type-is-boolean
 Calculator.prototype.setShouldRound = function(value) {
 	if(({}).toString.call(value).match(/\s([a-zA-Z]+)/)[1].toLowerCase())
