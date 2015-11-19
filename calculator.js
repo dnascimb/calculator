@@ -1,20 +1,13 @@
 //
 // The Calculator is meant to aid in simpler calculations while preparing
-// oil and butter extracts of chemicals from specific plants.
+// oil and butter extracts of chemicals from cannabis.
 //
 ///////////////////////////////////////////////////////////////////////////////
 
 
-
-// - create a conversion table with this + pic:
-// 1 stick = 8 tbsp
-// 1 tbsp = 3 tsp
-// 1 tbsp (volume) = 14.18 g (mass)
-// 1 tsp (volume) = 4.72666667 g (mass)
-
 // LOSSES
-// - THC after curing: -2%
-// - THC after infusion with butter: -25%
+// - THC after curing: -2 percentage points
+// - THC after infusion with butter: -30%
 // - THC after infusion with oil: -20%
 // - Butter after infusion: -25%
 // - Oil after infusion: -20%
@@ -27,7 +20,7 @@ var constants = {
    BUTTER_LOSS: .25,
    OIL_LOSS: .2,
    SUBA_LOSS_AFTER_CURING: 2,
-   SUBA_LOSS_AFTER_BUTTER_INFUSION: .25,
+   SUBA_LOSS_AFTER_BUTTER_INFUSION: .30,
    SUBA_LOSS_AFTER_OIL_INFUSION: .2
 };
 Calculator.prototype.getConstantButterLoss = function(){return constants.BUTTER_LOSS;};
@@ -43,11 +36,14 @@ function Calculator() {
 	this.subA_startingPercentage = 0;
 	this.subA_finalMass = 0;
 	this.subB_startingMassGrams = 0;
+	this.subBAmountInRecipe = 0;
 	this.substanceALossPercentage = 20; //default
 	this.substanceBType = constants.INFUSION_TYPE_BUTTER; //butter=100,oil=1
 	this.substanceBLoss = 25;
 	this.subAPercentAfterInfusion = 0;
 	this.subACalculatedMassPerGramForInfusion = 0;
+	this.multiplier = 0;
+	this.subAPerSpecificSubB = 0;
 	this.shouldRound = false;
 }
 
@@ -73,9 +69,9 @@ Calculator.prototype.getSubAPercentAfterInfusion = function() {
 		return 0;
 	//console.log("cured sub loss: " + this.substanceBLoss);
 	if(this.substanceBType == constants.INFUSION_TYPE_BUTTER)
-		this.substanceBLoss = constants.BUTTER_LOSS;//butter
+		this.substanceBLoss = constants.SUBA_LOSS_AFTER_BUTTER_INFUSION;//butter
 	else
-		this.substanceBLoss = constants.OIL_LOSS;//oil
+		this.substanceBLoss = constants.SUBA_LOSS_AFTER_OIL_INFUSION;//oil
 
 	this.subAPercentAfterInfusion = this.getCuredSubAPercent() * (1 - this.substanceBLoss);
 
@@ -89,7 +85,7 @@ Calculator.prototype.getSubAPercentAfterInfusion = function() {
 // This function returns the cured mass amount of SubstanceA (mg) per of cannabis
 //
 Calculator.prototype.getCuredSubACalculatedMassPerGram = function() {
-	this.curedSubACalculatedMassPerGram = this.getCuredSubAPercent() * 10;
+	this.curedSubACalculatedMassPerGram = this.getSubAPercentAfterInfusion() * 10;
 	if(this.shouldRound)
 		return this.curedSubACalculatedMassPerGram.toFixed(2);
 	else
@@ -120,8 +116,79 @@ Calculator.prototype.getCuredSubACalculatedMassTotal = function() {
 		return this.curedSubACalculatedMass;
 };
 
+
+
+
+
+
+
+//
+// This function returns the multiplier to use when calculating recipe amounts of THC MG per serving
+//
+Calculator.prototype.getMultiplier = function() {
+	if(!this.subA_finalMass || !this.substanceBType)
+		return 0;
+	var total_thcmg = this.getSubACalculatedMassPerGramForInfusion() * this.subA_finalMass;
+
+	var a = this.subBAmountInRecipe; //56.x
+	//console.log("b: " + b);
+
+	var b = this.subA_finalMass; //5g
+
+	var numerator = a * b;
+	var denominator = total_thcmg;
+
+console.log("a: " + a);
+console.log("b: " + b);
+console.log("numerator: " + numerator);
+console.log("denominator: " + denominator);
+
+
+
+	this.multiplier = numerator / denominator;
+
+	console.log("multiplier: " + this.multiplier);
+	if(this.shouldRound)
+		return this.multiplier.toFixed(2);
+	else
+		return this.multiplier;
+};
+
 //
 // This function returns the SubstanceA (mg) mass amount per SubstanceB (g) mass amount
+//
+Calculator.prototype.getSubAPerSpecificGramsSubB = function(value) {
+	if(!value)
+		return 0;
+
+	console.log("value: " + value);
+	
+	var a = this.getMultiplier();
+	var b = value;
+
+	this.subAPerSpecificSubB = a * b;
+	if(this.shouldRound)
+		return this.subAPerSpecificSubB.toFixed(2);
+	else
+		return this.subAPerSpecificSubB;
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+//
+// This function returns the SubstanceA (mg) mass amount per SubstanceB (g) mass amount
+//
 Calculator.prototype.getSubAMassPerSingleSubBMassUnit = function() {
 	if(this.substanceBType)
 	{
@@ -167,19 +234,17 @@ Calculator.prototype.getSubBMassAfterInfusion = function() {
 		return 0;
 
 	if(this.substanceBType == constants.INFUSION_TYPE_BUTTER)
-		this.substanceBLoss = constants.SUBA_LOSS_AFTER_BUTTER_INFUSION;//butter
+		this.substanceBLoss = constants.BUTTER_LOSS;//butter
 	else
-		this.substanceBLoss = constants.SUBA_LOSS_AFTER_OIL_INFUSION;//oil
+		this.substanceBLoss = constants.OIL_LOSS;//oil
 
 	var a = (this.subB_startingMassGrams * (1-this.substanceBLoss))
+
 	if(this.substanceBType == constants.INFUSION_TYPE_BUTTER)
 		var b = constants.BUTTER_GRAMS_IN_TABLESPOON;
 	else
 		var b = constants.OIL_GRAMS_IN_TABLESPOON;
 
-//	console.log("2a: " + a);
-//	console.log("2b: " + b);
-//	console.log("this.subB_startingMassGrams: " + this.subB_startingMassGrams);
 	this.subB_massAfterInfusion = a / b;
 	if(this.shouldRound)
 		return this.subB_massAfterInfusion.toFixed(2);
@@ -256,4 +321,17 @@ Calculator.prototype.setSubBType = function(value) {
 	//console.log("value: " + value);
 	if(value)
 		this.substanceBType = value; //entered in tablespoons and we convert to grams
+};
+
+//
+// This function sets the SubBAmountInRecipe property
+// 
+Calculator.prototype.setSubBAmountInRecipe = function(value) {
+	if(this.substanceBType && value)
+	{
+		if(this.substanceBType == constants.INFUSION_TYPE_BUTTER)
+			this.subBAmountInRecipe = value * constants.BUTTER_GRAMS_IN_TABLESPOON; //grams
+		else
+			this.subBAmountInRecipe = value * constants.OIL_GRAMS_IN_TABLESPOON; //grams
+	} 
 };

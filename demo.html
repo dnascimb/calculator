@@ -15,35 +15,37 @@
 <script type="text/javascript" src="calculator.js"></script>
 <script type="text/javascript">
 
-	function calculateAndDisplay(cannabis_starting_thc_percentage, cannabis_cured_mass, subB_amount, subB_type) {
-		
+	function calculateAndDisplay(cannabis_starting_thc_percentage, cannabis_cured_mass, subB_amount, subB_type, subB_amount_in_recipe) {
+
 		var calc = new Calculator();
-		//console.log("calc subb_type: " + subB_type);
-		// set values for core variables
+
+		// set values for core attributes
     calc.setShouldRound(true);
 		calc.setOriginalPercentageSubA(cannabis_starting_thc_percentage);
 		calc.setFinalSubAMass(cannabis_cured_mass);
 		calc.setMassResultSubB(subB_amount);
     calc.setSubBType(subB_type);
+    calc.setSubBAmountInRecipe(subB_amount_in_recipe);
 
 		// set calculated values to display on screen
-    if(subB_amount) {
-      if(subB_type == 100)
-        $("#amount_of_cannasubstance").text((subB_amount * .75).toFixed(2) + " tbsp");
-      else
-        $("#amount_of_cannasubstance").text((subB_amount * .8).toFixed(2) + " tbsp");
-    }
+    $("#amount_of_cannasubstance").text(calc.getSubBMassAfterInfusion() + " tbsp");
 
-    if(subB_type == 100) {
-      var thc_in_cannasubstance = ((cannabis_starting_thc_percentage-2) * 10) - (cannabis_starting_thc_percentage * .25);
-      $("#thc_in_cannasubstance").text((thc_in_cannasubstance * cannabis_cured_mass).toFixed(2) + " mg");
+    $("#thc_in_cannasubstance").text(calc.getCuredSubACalculatedMassTotal() + " mg");
+
+    if(subB_type == 100)
+    {
+      var totalInRecipe = calc.getSubAPerSpecificGramsSubB($.trim($("#cooking_subB_amount").val()) * 14.18);
     } else {
-      var thc_in_cannasubstance = ((cannabis_starting_thc_percentage-2) * 10) - (cannabis_starting_thc_percentage * .20);
-      $("#thc_in_cannasubstance").text((thc_in_cannasubstance * cannabis_cured_mass).toFixed(2) + " mg");
+      var totalInRecipe = calc.getSubAPerSpecificGramsSubB($.trim($("#cooking_subB_amount").val()) * 13.72);
     }
 
-		$("#thc_per_serving").text(calc.getSubAMassPerNumberOfServings($.trim($("#cooking_subB_amount").val()), 
-      $.trim($("#recipe_servings").val())) + " mg");
+    
+    console.log("totalInRecipe: " + totalInRecipe);
+    var numberOfServings = $.trim($("#recipe_servings").val());
+    if(totalInRecipe && totalInRecipe > 0 && numberOfServings && numberOfServings > 0){
+      console.log("div: " + numberOfServings);
+		  $("#thc_per_serving").text(totalInRecipe / numberOfServings + " mg");
+    }
 	}
 
 	$(document).ready(function(){
@@ -51,47 +53,47 @@
     	$("#cured_mass").blur(function(){
         //console.log("radio: " + $("input[name=radios]:checked").val());
         	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), 
-            $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val());
+            $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val(), $.trim($("#cooking_subB_amount").val()));
     	});
     	$("#suba_percentage").blur(function(){
         //console.log("radio: " + $("input[name=radios]:checked").val());
         	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), 
-            $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val());
+            $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val(), $.trim($("#cooking_subB_amount").val()));
     	});
     	$("#subB_amount").blur(function(){
         //console.log("radio: " + $("input[name=radios]:checked").val());
         	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), 
-            $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val());
+            $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val(), $.trim($("#cooking_subB_amount").val()));
     	});
 		  $("#cooking_subB_amount").blur(function(){
         //console.log("radio: " + $("input[name=radios]:checked").val());
         	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), 
-            $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val());
+            $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val(), $.trim($("#cooking_subB_amount").val()));
     	});
     	$("#recipe_servings").blur(function(){
         //console.log("radio: " + $("input[name=radios]:checked").val());
         	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), 
-            $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val());
+            $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val(), $.trim($("#cooking_subB_amount").val()));
     	});
       $("#radios-0").click(function(){
         //console.log("radio: " + $("input[name=radios]:checked").val());
           $("#infusion_substance_label").text("Butter");
-          $("#baking_substance_label").text("Canna-butter");
-          $("#cooking_substance_label").text("Canna-butter");
-          $("#title1").text("Canna-butter");
-          $("#amount_of_cannasubstance_label").text("Canna-butter");
-          $("#thc_in_cannasubstance_label").text("Canna-butter");
-          calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val());
+          $("#baking_substance_label").text("CannaButter");
+          $("#cooking_substance_label").text("CannaButter");
+          $("#title1").text("CannaButter");
+          $("#amount_of_cannasubstance_label").text("CannaButter");
+          $("#thc_in_cannasubstance_label").text("CannaButter");
+          calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val(), $.trim($("#cooking_subB_amount").val()));
       });
       $("#radios-1").click(function(){
         //console.log("radio: " + $("input[name=radios]:checked").val());
           $("#infusion_substance_label").text("Oil");
-          $("#baking_substance_label").text("Canna-oil");
-          $("#cooking_substance_label").text("Canna-oil");
-          $("#title1").text("Canna-oil");
-          $("#amount_of_cannasubstance_label").text("Canna-oil");
-          $("#thc_in_cannasubstance_label").text("Canna-oil");
-          calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val());
+          $("#baking_substance_label").text("CannaOil");
+          $("#cooking_substance_label").text("CannaOil");
+          $("#title1").text("CannaOil");
+          $("#amount_of_cannasubstance_label").text("CannaOil");
+          $("#thc_in_cannasubstance_label").text("CannaOil");
+          calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val(), $.trim($("#cooking_subB_amount").val()));
       });
 
     	
@@ -129,7 +131,7 @@
 	<div class="container">
 
     		<div id="inputsection1" class="col-md-12">
-          <h1>Infusion for <span id="title1">Canna-butter</span></h1>
+          <h1>Infusion for <span id="title1">CannaButter</span></h1>
     			<form name="calcForm1" class="form-horizontal">
            
             <div class="form-group">
@@ -179,7 +181,7 @@
           <div class="col-md-4">
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                  <h3 class="panel-title">Amount of <span id="amount_of_cannasubstance_label">Canna-butter</span> Produced</h3>
+                  <h3 class="panel-title">Amount of <span id="amount_of_cannasubstance_label">CannaButter</span> Produced</h3>
                 </div>
                 <div class="panel-body">
                   <label id="amount_of_cannasubstance">0 tbsp</label>
@@ -189,7 +191,7 @@
           <div class="col-md-4">
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                  <h3 class="panel-title">THC|CBD in <span id="thc_in_cannasubstance_label">Canna-butter</span></h3>
+                  <h3 class="panel-title">THC|CBD in <span id="thc_in_cannasubstance_label">CannaButter</span></h3>
                 </div>
                 <div class="panel-body">
                   <label id="thc_in_cannasubstance">0 mg</label>
@@ -203,11 +205,11 @@
 
           <!-- COOKING SECTION -->
           <div id="inputsection2" class="col-md-12"> 
-            <h1>Cooking and Baking with <span id="baking_substance_label">Canna-butter</span></h1>         
+            <h1>Cooking and Baking with <span id="baking_substance_label">CannaButter</span></h1>         
             <form name="calcForm1" class="form-horizontal">
             <div class="form-group">
             
-              <label class="control-label col-sm-4" for="cooking_subB_amount">Recipe <span id="cooking_substance_label">Canna-butter</span> Amount (tbsp): </label>
+              <label class="control-label col-sm-4" for="cooking_subB_amount">Recipe <span id="cooking_substance_label">CannaButter</span> Amount (tbsp): </label>
               <div class="col-sm-4">
                 <input name="cooking_subB_amount" id="cooking_subB_amount" class="form-control" placeholder=""/>
               </div>
