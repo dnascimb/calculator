@@ -30,16 +30,24 @@
 		// set calculated values to display on screen
     $("#amount_of_cannasubstance").text(calc.getSubBMassAfterInfusion() + " tbsp");
 
-    $("#thc_in_cannasubstance").text(calc.getStep6() + " mg");
+    $("#thc_in_cannasubstance").text(calc.getCuredSubACalculatedMassTotal() + " mg");
 
-    var totalInRecipe = calc.getStep7($.trim($("#cooking_subB_amount").val()));
+    if(subB_type == 100)
+    {
+      var totalInRecipe = calc.getSubAPerSpecificGramsSubB($.trim($("#cooking_subB_amount").val()) * 14.18);
+    } else {
+      var totalInRecipe = calc.getSubAPerSpecificGramsSubB($.trim($("#cooking_subB_amount").val()) * 13.72);
+    }
 
+    
+    console.log("totalInRecipe: " + totalInRecipe);
     var numberOfServings = $.trim($("#recipe_servings").val());
     if(totalInRecipe && totalInRecipe > 0 && numberOfServings && numberOfServings > 0){
+      console.log("div: " + numberOfServings);
       if(subB_type == 100)
 		    $("#thc_per_serving").text(totalInRecipe / numberOfServings + " mg");
       else
-        $("#thc_per_serving").text((totalInRecipe / numberOfServings) + " mg");
+        $("#thc_per_serving").text((totalInRecipe / numberOfServings) * 1.28 + " mg");
     }
 	}
 
@@ -126,13 +134,13 @@
 	<div class="container">
 
     		<div id="inputsection1" class="col-md-12">
-          <h1>Infusion for <span id="title1">CannaButter</span></h1>
+          <h1>Sed id Nisl Lorem <span id="title1">Pellentesque</span></h1>
     			<form name="calcForm1" class="form-horizontal">
            
             <div class="form-group">
               
 
-    				  <label class="control-label col-sm-4" for="suba_percentage">Starting Cannabis THC|CBD Percentage: </label>
+    				  <label class="control-label col-sm-4" for="suba_percentage">Quisque eu neque placerat: </label>
               <div class="col-sm-4">
     				    <input name="suba_percentage" id="suba_percentage" class="form-control" placeholder=""/>
               </div>
@@ -140,7 +148,7 @@
 
               <br><br>
 
-              <label class="control-label col-sm-4" for="cured_mass">Final Cannabis Weight (grams): </label>
+              <label class="control-label col-sm-4" for="cured_mass">Nulla sed tortor vitae (g): </label>
               <div class="col-sm-4">
     				    <input name="cured_mass" id="cured_mass" class="form-control" placeholder=""/> 
     			    </div>
@@ -148,19 +156,19 @@
 
               <br><br>
 
-              <label class="control-label col-sm-4" for="radios">Infused Substance:</label>
+              <label class="control-label col-sm-4" for="radios">magna faucibus iaculis:</label>
               <div class="col-sm-8">
                 <label class="radio-inline col-sm-2" for="radios-0">
-                  <input type="radio" name="radios" id="radios-0" value="100" checked="checked"> Butter
+                  <input type="radio" name="radios" id="radios-0" value="100" checked="checked"> Maecenas
                 </label> 
                 <label class="radio-inline col-sm-2" for="radios-1">
-                  <input type="radio" name="radios" id="radios-1" value="200"> Oil
+                  <input type="radio" name="radios" id="radios-1" value="200"> Sed
                 </label>
               </div>
             
               <br><br>
                
-              <label class="control-label col-sm-4" for="subB_amount">Amount of <span id="infusion_substance_label">Butter</span> Infused (tbsp): </label> 
+              <label class="control-label col-sm-4" for="subB_amount">Sollicitudin eget <span id="infusion_substance_label">Maecenas</span> Faucibus (tbsp): </label> 
               <div class="col-sm-4">
                 <input name="subB_amount" id="subB_amount" class="form-control" placeholder=""/>
               </div>
@@ -176,7 +184,7 @@
           <div class="col-md-4">
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                  <h3 class="panel-title">Amount of <span id="amount_of_cannasubstance_label">CannaButter</span> Produced</h3>
+                  <h3 class="panel-title">Sollicitudin eget <span id="amount_of_cannasubstance_label">Maecenas</span> Faucibus</h3>
                 </div>
                 <div class="panel-body">
                   <label id="amount_of_cannasubstance">0 tbsp</label>
@@ -186,7 +194,7 @@
           <div class="col-md-4">
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                  <h3 class="panel-title">THC|CBD in <span id="thc_in_cannasubstance_label">CannaButter</span></h3>
+                  <h3 class="panel-title">Solli|Fau ti <span id="thc_in_cannasubstance_label">Maecenas</span></h3>
                 </div>
                 <div class="panel-body">
                   <label id="thc_in_cannasubstance">0 mg</label>
@@ -200,11 +208,11 @@
 
           <!-- COOKING SECTION -->
           <div id="inputsection2" class="col-md-12"> 
-            <h1>Cooking and Baking with <span id="baking_substance_label">CannaButter</span></h1>         
+            <h1>Suspendisse nad Quisque thio <span id="baking_substance_label">Maecenas</span></h1>         
             <form name="calcForm1" class="form-horizontal">
             <div class="form-group">
             
-              <label class="control-label col-sm-4" for="cooking_subB_amount">Recipe <span id="cooking_substance_label">CannaButter</span> Amount (tbsp): </label>
+              <label class="control-label col-sm-4" for="cooking_subB_amount">Praesent <span id="cooking_substance_label">Maecenas</span> Sollicitudin (tbsp): </label>
               <div class="col-sm-4">
                 <input name="cooking_subB_amount" id="cooking_subB_amount" class="form-control" placeholder=""/>
               </div>
@@ -212,7 +220,7 @@
               
               <br><br>
               
-              <label class="control-label col-sm-4" for="recipe_servings">Recipe Number of Servings: </label> 
+              <label class="control-label col-sm-4" for="recipe_servings">In Hac Habitasse: </label> 
               <div class="col-sm-4">
                 <input name="recipe_servings" id="recipe_servings" class="form-control" placeholder=""/>
               </div>
@@ -227,7 +235,7 @@
         <div class="col-md-8">
           <div class="panel panel-primary">
               <div class="panel-heading">
-                <h3 class="panel-title">THC|CBD per Serving</h3>
+                <h3 class="panel-title">Solli|Fau ni Sollici</h3>
               </div>
               <div class="panel-body">
                 <label id="thc_per_serving">0 mg</label>
@@ -311,10 +319,11 @@
       <br>
 
       <div class="col-md-12">
-        <i>Formula by JeffThe420Chef, Calculator created by <a href="https://about.me/dannascimbeni">Dan Nascimbeni</a> and sponsored by CW Analytical and Medspoon</i><br>
-        <a href="http://www.jeffthe420chef.com" style="padding-right:10px"><img src="images/JeffThe420Cheflogo_100px.jpg" alt="JeffThe420Chef Logo"></a>
-        <a href="http://medspoon.com/" style="padding-right:10px"><img src="images/MedSpoon_Logo_70px.jpg" alt="Medspoon Logo"></a>
-        <a href="http://www.cwanalytical.com/" style="padding-right:10px"><img src="images/CWFinalLogoUpright_100px.jpg" alt="CW Analytics Logo"></a>
+        <i>Sed id nisl lorem. Phasellus vitae elit velit. Pellentesque rhoncus massa sed lacus aliquet, non porta elit consectetur.</i><br>
+        <a href="http://www.jeffthe420chef.com" style="padding-right:10px"><img src="images/JeffThe420Cheflogo_100px.jpg." alt=" Logo" style="width:150px;height:100px;"></a>
+        <a href="http://about.me/dannascimbeni" style="padding-right:10px"><img src="images/dan_100px.jpg." alt=" Logo" style="width:150px;height:100px;"></a>
+        <a href="http://medspoon.com/" style="padding-right:10px"><img src="images/MedSpoon_Logo_70px.jpg." alt=" Logo" style="width:200px;height:100px;"></a>
+        <a href="http://www.cwanalytical.com/" style="padding-right:10px"><img src="images/CWFinalLogoUpright_100px.jpg." alt=" Logo"  style="width:200px;height:100px;"></a>
       </div>
     
       <div class="col-md-12">
@@ -322,9 +331,9 @@
           <br><br>
           <i><b>Disclaimer</b>
           <br><br>
-          This calculator is for educational purposes only and can help you estimate the number of milligrams of THC and or CBD in your recipe, provided you input accurate information into the input fields. Always use tested Cannabis when making your own butter or oil. Ask the dispensary or cultivator that you are procuring your Cannabis from for test results, for both potency, and also for pesticides and microbiological contaminants like mold and bacteria. If you don't have access to a testing lab or Cannabis that has been tested, you can roughly determine the potency of your butter by estimating it's starting potency. Although estimating it by its visual appearance is hardly fool-proof, buds that are thick, sticky, and frosty (many trichomes present) can be anywhere from 15-27%THC. A lot of Cannabis grown outdoors will test slightly lower, as they won't necessarily contain as many THC-rich trichomes. These could be estimated anywhere from 10-20% depending on factors like sun exposure, exposure to the elements, and strain genetics. 
+          Quisque vitae scelerisque tortor. Sed id nisl lorem. Phasellus vitae elit velit. Pellentesque rhoncus massa sed lacus aliquet, non porta elit consectetur. Fusce odio arcu, semper et porta in, sollicitudin eget arcu. Ut sed nulla et tortor tincidunt volutpat. Pellentesque nisi lacus, pulvinar sit amet orci at, lobortis pretium libero. Nulla sed tortor vitae magna faucibus iaculis. Praesent quis viverra ipsum, nec tincidunt velit. Fusce egestas risus ac purus pharetra faucibus sed sit amet lacus. Nunc fringilla efficitur porta. Donec quis elit finibus, faucibus erat eget, finibus neque. Maecenas lacus ipsum, viverra condimentum blandit fringilla, scelerisque at augue. Curabitur semper orci vitae lacus condimentum aliquet. Suspendisse mollis fringilla lectus nec volutpat. 
           <br><br>
-          If possible, it is recommended that you test your butter after making it to ensure that you've processed it correctly, and haven't experienced major losses in THC. CW Analytical offers discounted testing to individual patients looking to test their personal-use medicine. If you are outside of CA, contact your local lab to see if they offer patient discounts.</i>
+          Donec sit amet metus quis odio elementum eleifend. Sed nec tristique felis. Vivamus vel purus risus. Suspendisse porta lectus dui, a malesuada ex condimentum sed. Praesent aliquam laoreet quam in congue. Mauris sagittis a elit at malesuada. Mauris et mi sem. Sed molestie, magna id venenatis laoreet, leo ante molestie nisl, ac commodo magna diam sodales nunc.</i>
         </p>
         <br>
         <br>
