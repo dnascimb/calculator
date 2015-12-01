@@ -14,7 +14,14 @@
 <script type="text/javascript" src="external/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="calculator.js"></script>
 <script type="text/javascript">
-
+  function getFirstResult() {
+    calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), 
+            $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val(), $.trim($("#cooking_subB_amount").val()));
+  }
+  function getSecondResult() {
+    calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), 
+            $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val(), $.trim($("#cooking_subB_amount").val()));
+  }
 	function calculateAndDisplay(cannabis_starting_thc_percentage, cannabis_cured_mass, subB_amount, subB_type, subB_amount_in_recipe) {
 
 		var calc = new Calculator();
@@ -126,6 +133,7 @@
 	<div class="container">
 
     		<div id="inputsection1" class="col-md-12">
+          <h2 style="color:red">(Beta)</h2>
           <h1>Infusion for <span id="title1">CannaButter</span></h1>
     			<form name="calcForm1" class="form-horizontal">
            
@@ -167,7 +175,11 @@
               <label class="col-sm-4"></label>
 
               <br><br>
-
+              <label class="col-sm-4"></label>
+              <div class="col-sm-4">
+                <button id="firstButton" type="button" class="btn btn-lg btn-primary" onClick="getFirstResult">Calculate</button>
+              </div>
+              <label class="col-sm-4"></label>
             </div>
           </form>
           </div>
@@ -217,6 +229,13 @@
                 <input name="recipe_servings" id="recipe_servings" class="form-control" placeholder=""/>
               </div>
             </div>
+
+            <label class="col-sm-4"></label>
+            <div class="col-sm-4">
+              <button id="firstButton" type="button" class="btn btn-lg btn-primary" onClick="getSecondResult">Calculate</button>
+            </div>
+            <label class="col-sm-4"></label>
+            <br><br>
            <!-- <button class="btn btn-lg btn-primary btn-block" type="submit" onClick="calculateAndDisplay($.trim($('#suba_percentage').val()), $.trim($('#cured_mass').val()), $.trim($('#subB_amount').val()), $('input[name=radios]:checked').val());">Calculate Result</button> -->
           </form>
     		</div>
