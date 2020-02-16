@@ -1,0 +1,377 @@
+<html>
+<head>
+<title>The Calculator</title>
+<link rel="stylesheet" href="external/bootstrap.min.css">
+<link rel="stylesheet" href="external/bootstrap-theme.min.css">
+<style type="text/css">
+  .tg  {border-collapse:collapse;border-spacing:0;}
+  .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+  .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+  .tg .tg-3ojc{font-weight:bold;color:#333333;vertical-align:top}
+  .tg .tg-9hbo{font-weight:bold;vertical-align:top}
+  .tg .tg-yw4l{vertical-align:top}
+</style>
+<script type="text/javascript" src="external/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="calculator_site.js"></script>
+<script type="text/javascript">
+  function getFirstResult() {
+    calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), 
+            $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val(), $.trim($("#cooking_subB_amount").val()));
+  }
+
+  function getSecondResult() {
+    calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), 
+            $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val(), $.trim($("#cooking_subB_amount").val()));
+  }
+	function calculateAndDisplay(cannabis_starting_thc_percentage, cannabis_cured_mass, subB_amount, subB_type, subB_amount_in_recipe) {
+
+		var calc = new Calculator();
+
+		// set values for core attributes
+    calc.setShouldRound(true);
+		calc.setOriginalPercentageSubA(cannabis_starting_thc_percentage);
+		calc.setFinalSubAMass(cannabis_cured_mass);
+		calc.setMassResultSubB(subB_amount);
+    calc.setSubBType(subB_type);
+    calc.setSubBAmountInRecipe(subB_amount_in_recipe);
+
+		// set calculated values to display on screen
+    $("#amount_of_cannasubstance").text(calc.getSubBMassAfterInfusion() + " tbsp");
+
+    $("#thc_in_cannasubstance").text(calc.getStep6() + " mg");
+
+    var totalInRecipe = calc.getStep7($.trim($("#cooking_subB_amount").val()));
+
+    var numberOfServings = $.trim($("#recipe_servings").val());
+    if(totalInRecipe && totalInRecipe > 0 && numberOfServings && numberOfServings > 0){
+      if(subB_type == 100)
+		    $("#thc_per_serving").text(totalInRecipe / numberOfServings + " mg");
+      else
+        $("#thc_per_serving").text((totalInRecipe / numberOfServings) + " mg");
+    }
+	}
+
+	$(document).ready(function(){
+    	
+    	$("#cured_mass").blur(function(){
+        //console.log("radio: " + $("input[name=radios]:checked").val());
+        	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), 
+            $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val(), $.trim($("#cooking_subB_amount").val()));
+    	});
+    	$("#suba_percentage").blur(function(){
+        //console.log("radio: " + $("input[name=radios]:checked").val());
+        	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), 
+            $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val(), $.trim($("#cooking_subB_amount").val()));
+    	});
+    	$("#subB_amount").blur(function(){
+        //console.log("radio: " + $("input[name=radios]:checked").val());
+        	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), 
+            $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val(), $.trim($("#cooking_subB_amount").val()));
+    	});
+		  $("#cooking_subB_amount").blur(function(){
+        //console.log("radio: " + $("input[name=radios]:checked").val());
+        	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), 
+            $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val(), $.trim($("#cooking_subB_amount").val()));
+    	});
+    	$("#recipe_servings").blur(function(){
+        //console.log("radio: " + $("input[name=radios]:checked").val());
+        	calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), 
+            $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val(), $.trim($("#cooking_subB_amount").val()));
+    	});
+      $("#radios-0").click(function(){
+        //console.log("radio: " + $("input[name=radios]:checked").val());
+          $("#infusion_substance_label").text("Butter");
+          $("#baking_substance_label").text("CannaButter");
+          $("#cooking_substance_label").text("CannaButter");
+          $("#title1").text("CannaButter");
+          $("#amount_of_cannasubstance_label").text("CannaButter");
+          $("#thc_in_cannasubstance_label").text("CannaButter");
+          calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val(), $.trim($("#cooking_subB_amount").val()));
+      });
+      $("#radios-1").click(function(){
+        //console.log("radio: " + $("input[name=radios]:checked").val());
+          $("#infusion_substance_label").text("Oil");
+          $("#baking_substance_label").text("CannaOil");
+          $("#cooking_substance_label").text("CannaOil");
+          $("#title1").text("CannaOil");
+          $("#amount_of_cannasubstance_label").text("CannaOil");
+          $("#thc_in_cannasubstance_label").text("CannaOil");
+          calculateAndDisplay($.trim($("#suba_percentage").val()), $.trim($("#cured_mass").val()), $.trim($("#subB_amount").val()), $("input[name=radios]:checked").val(), $.trim($("#cooking_subB_amount").val()));
+      });
+
+    	
+
+
+    	//protect the fields from bad user entry
+    	// 48 = "0", 57 = "9", 127 = delete, 8 = backspace, 190 = ".", 9 = tab
+    	$('#cured_mass').keydown(function(event){
+    		var keycode = (event.keyCode ? event.keyCode : event.which);
+    		if((keycode < 48 || keycode > 57) && keycode != 127 && keycode != 8 && keycode != 190 && keycode != 9) {
+        		event.preventDefault();
+   				return false;
+   			}
+    	});
+    	$('#suba_percentage').keydown(function(event){
+    		var keycode = (event.keyCode ? event.keyCode : event.which);
+    		if((keycode < 48 || keycode > 57) && keycode != 127 && keycode != 8 && keycode != 190 && keycode != 9) {
+        		event.preventDefault();
+   				return false;
+   			}
+    	});
+    	$('#subB_amount').keydown(function(event){
+    		var keycode = (event.keyCode ? event.keyCode : event.which);
+    		if((keycode < 48 || keycode > 57) && keycode != 127 && keycode != 8 && keycode != 190 && keycode != 9) {
+        		event.preventDefault();
+   				return false;
+   			}
+    	});
+    });
+</script>
+</head>
+
+
+<body>
+	<div class="container">
+
+    		<div id="inputsection1" class="col-md-12">
+          <h2 style="color:red">(Beta)</h2>
+          <h1>Infusion for <span id="title1">CannaButter</span></h1>
+    			<form name="calcForm1" class="form-horizontal">
+           
+            <div class="form-group">
+              
+
+    				  <label class="control-label col-sm-4" for="suba_percentage">Starting Cannabis THC|CBD Percentage: </label>
+              <div class="col-sm-4">
+    				    <input name="suba_percentage" id="suba_percentage" class="form-control" placeholder=""/>
+              </div>
+              <label class="col-sm-4"></label>
+
+              <br><br>
+
+              <label class="control-label col-sm-4" for="cured_mass">Final Cannabis Weight (grams): </label>
+              <div class="col-sm-4">
+    				    <input name="cured_mass" id="cured_mass" class="form-control" placeholder=""/> 
+    			    </div>
+              <label class="col-sm-4"></label>
+
+              <br><br>
+
+              <label class="control-label col-sm-4" for="radios">Infused Substance:</label>
+              <div class="col-sm-8">
+                <label class="radio-inline col-sm-2" for="radios-0">
+                  <input type="radio" name="radios" id="radios-0" value="100" checked="checked"> Butter
+                </label> 
+                <label class="radio-inline col-sm-2" for="radios-1">
+                  <input type="radio" name="radios" id="radios-1" value="200"> Oil
+                </label>
+              </div>
+            
+              <br><br>
+               
+              <label class="control-label col-sm-4" for="subB_amount">Amount of <span id="infusion_substance_label">Butter</span> Infused (tbsp): </label> 
+              <div class="col-sm-4">
+                <input name="subB_amount" id="subB_amount" class="form-control" placeholder=""/>
+              </div>
+              <label class="col-sm-4"></label>
+
+              <br><br>
+              <label class="col-sm-4"></label>
+              <div class="col-sm-4">
+                <button id="firstButton" type="button" class="btn btn-lg btn-primary" onClick="getFirstResult">Calculate</button>
+              </div>
+              <label class="col-sm-4"></label>
+            </div>
+          </form>
+          </div>
+
+
+          <div class="col-md-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Amount of <span id="amount_of_cannasubstance_label">CannaButter</span> Produced</h3>
+                </div>
+                <div class="panel-body">
+                  <label id="amount_of_cannasubstance">0 tbsp</label>
+                </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                  <h3 class="panel-title">THC|CBD in <span id="thc_in_cannasubstance_label">CannaButter</span></h3>
+                </div>
+                <div class="panel-body">
+                  <label id="thc_in_cannasubstance">0 mg</label>
+                </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+               
+          </div>
+
+
+          <!-- COOKING SECTION -->
+          <div id="inputsection2" class="col-md-12"> 
+            <h1>Cooking and Baking with <span id="baking_substance_label">CannaButter</span></h1>         
+            <form name="calcForm1" class="form-horizontal">
+            <div class="form-group">
+            
+              <label class="control-label col-sm-4" for="cooking_subB_amount">Recipe <span id="cooking_substance_label">CannaButter</span> Amount (tbsp): </label>
+              <div class="col-sm-4">
+                <input name="cooking_subB_amount" id="cooking_subB_amount" class="form-control" placeholder=""/>
+              </div>
+              <label class="col-sm-4"></label>
+              
+              <br><br>
+              
+              <label class="control-label col-sm-4" for="recipe_servings">Recipe Number of Servings: </label> 
+              <div class="col-sm-4">
+                <input name="recipe_servings" id="recipe_servings" class="form-control" placeholder=""/>
+              </div>
+            </div>
+
+            <label class="col-sm-4"></label>
+            <div class="col-sm-4">
+              <button id="firstButton" type="button" class="btn btn-lg btn-primary" onClick="getSecondResult">Calculate</button>
+            </div>
+            <label class="col-sm-4"></label>
+            <br><br>
+           <!-- <button class="btn btn-lg btn-primary btn-block" type="submit" onClick="calculateAndDisplay($.trim($('#suba_percentage').val()), $.trim($('#cured_mass').val()), $.trim($('#subB_amount').val()), $('input[name=radios]:checked').val());">Calculate Result</button> -->
+          </form>
+    		</div>
+
+      
+      
+        <!-- START RESULT SECTION -->
+        <div class="col-md-8">
+          <div class="panel panel-primary">
+              <div class="panel-heading">
+                <h3 class="panel-title">THC|CBD per Serving</h3>
+              </div>
+              <div class="panel-body">
+                <label id="thc_per_serving">0 mg</label>
+              </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          
+        </div>
+
+        <br>
+        <br>
+      
+      <!-- END TOP HALF -->
+      <br>
+      <br>
+
+      <div class="col-md-12">
+        <div id="myMeasurementChart">
+          <h1>Measurement Chart</h1>
+          <table class="tg">
+            <tr>
+              <th class="tg-3ojc">Butter</th>
+              <th class="tg-9hbo">Grams</th>
+              <th class="tg-9hbo">Tablespoons</th>
+              <th class="tg-9hbo">Oil</th>
+              <th class="tg-9hbo">Grams</th>
+              <th class="tg-9hbo">Tablespoons</th>
+            </tr>
+            <tr>
+              <td class="tg-yw4l">1 Stick</td>
+              <td class="tg-yw4l">113.4</td>
+              <td class="tg-yw4l">8</td>
+              <td class="tg-yw4l">1 cup</td>
+              <td class="tg-yw4l">219.55</td>
+              <td class="tg-yw4l">16</td>
+            </tr>
+            <tr>
+              <td class="tg-yw4l">1 cup</td>
+              <td class="tg-yw4l">226.8</td>
+              <td class="tg-yw4l">16</td>
+              <td class="tg-yw4l">&frac34; cup</td>
+              <td class="tg-yw4l">164.67</td>
+              <td class="tg-yw4l">12</td>
+            </tr>
+            <tr>
+              <td class="tg-yw4l">&frac34; cup</td>
+              <td class="tg-yw4l">170.1</td>
+              <td class="tg-yw4l">12</td>
+              <td class="tg-yw4l">&frac12; cup</td>
+              <td class="tg-yw4l">109.78</td>
+              <td class="tg-yw4l">8</td>
+            </tr>
+            <tr>
+              <td class="tg-yw4l">&frac12; cup</td>
+              <td class="tg-yw4l">113.4</td>
+              <td class="tg-yw4l">8</td>
+              <td class="tg-yw4l">&frac14; cup</td>
+              <td class="tg-yw4l">54.89</td>
+              <td class="tg-yw4l">4</td>
+            </tr>
+            <tr>
+              <td class="tg-yw4l">&frac14; cup</td>
+              <td class="tg-yw4l">56.7</td>
+              <td class="tg-yw4l">4</td>
+              <td class="tg-yw4l">1 Tablespoon</td>
+              <td class="tg-yw4l">13.72</td>
+              <td class="tg-yw4l">1</td>
+            </tr>
+            <tr>
+              <td class="tg-yw4l">1 Tablespoon</td>
+              <td class="tg-yw4l">14.18</td>
+              <td class="tg-yw4l">1</td>
+              <td class="tg-yw4l">1 fluid ounce</td>
+              <td class="tg-yw4l">27.44</td>
+              <td class="tg-yw4l">2</td>
+            </tr>
+          </table>
+        </div>
+      <br>
+      <br>
+
+      <div class="col-md-12">
+        <i>Formula &copy; 2015 by JeffThe420Chef, sponsored by CW Analytical and Medspoon</i><br>
+        <a href="http://www.jeffthe420chef.com" style="padding-right:10px"><img src="images/JeffThe420Cheflogo_100px.jpg" alt="JeffThe420Chef Logo"></a>
+        <a href="http://medspoon.com/" style="padding-right:10px"><img src="images/MedSpoon_Logo_70px.jpg" alt="Medspoon Logo"></a>
+        <a href="http://www.cwanalytical.com/" style="padding-right:10px"><img src="images/CWFinalLogoUpright_100px.jpg" alt="CW Analytics Logo"></a>
+      </div>
+    
+      <div class="col-md-12">
+        <p>
+          <br><br>
+          <i><b>Disclaimer</b>
+          <br><br>
+          This calculator is for educational purposes only and can help you estimate the number of milligrams of THC and or CBD in your recipe, provided you input accurate information into the input fields. Always use tested Cannabis when making your own butter or oil. Ask the dispensary or cultivator that you are procuring your Cannabis from for test results, for both potency, and also for pesticides and microbiological contaminants like mold and bacteria. If you don't have access to a testing lab or Cannabis that has been tested, you can roughly determine the potency of your butter by estimating it's starting potency. Although estimating it by its visual appearance is hardly fool-proof, buds that are thick, sticky, and frosty (many trichomes present) can be anywhere from 15-27%THC. A lot of Cannabis grown outdoors will test slightly lower, as they won't necessarily contain as many THC-rich trichomes. These could be estimated anywhere from 10-20% depending on factors like sun exposure, exposure to the elements, and strain genetics. 
+          <br><br>
+          If possible, it is recommended that you test your butter after making it to ensure that you've processed it correctly, and haven't experienced major losses in THC. CW Analytical offers discounted testing to individual patients looking to test their personal-use medicine. If you are outside of CA, contact your local lab to see if they offer patient discounts.</i>
+        </p>
+        <br>
+        <br>
+      </div>
+
+
+
+    </div>
+
+
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-70164506-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
+</body>
+
+
+</head>
